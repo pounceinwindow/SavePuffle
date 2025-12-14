@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="GravityFallsClient.Pages.MainMenuPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Main Menu">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Color x:Key="Ink">#3A2A1B</Color>
+            <Color x:Key="Parchment1">#F6E7C6</Color>
+            <Color x:Key="Parchment2">#EBD5A6</Color>
+            <Color x:Key="Line">#B8935E</Color>
+            <Color x:Key="Accent">#C85B23</Color>
+            <Color x:Key="AccentDark">#8F3E18</Color>
+
+            <LinearGradientBrush x:Key="ParchmentBrush" EndPoint="0,1">
+                <GradientStop Color="{StaticResource Parchment1}" Offset="0" />
+                <GradientStop Color="{StaticResource Parchment2}" Offset="1" />
+            </LinearGradientBrush>
+
+            <Style TargetType="Label" x:Key="FieldLabel">
+                <Setter Property="TextColor" Value="{StaticResource Ink}" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontAttributes" Value="Bold" />
+            </Style>
+
+            <Style TargetType="Entry" x:Key="FieldEntry">
+                <Setter Property="TextColor" Value="{StaticResource Ink}" />
+                <Setter Property="PlaceholderColor" Value="#7A5E3C" />
+                <Setter Property="BackgroundColor" Value="Transparent" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="Margin" Value="12,10" />
+            </Style>
+
+            <Style TargetType="Button" x:Key="LinkButton">
+                <Setter Property="BackgroundColor" Value="Transparent" />
+                <Setter Property="TextColor" Value="{StaticResource Ink}" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="Padding" Value="6,4" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid>
+        <Image Source="wood_bg.png" Aspect="AspectFill" />
+
+        <BoxView Opacity="0.10" BackgroundColor="Black" />
+
+        <ScrollView>
+            <VerticalStackLayout Padding="24" Spacing="18"
+                                 HorizontalOptions="Center"
+                                 MaximumWidthRequest="460">
+
+                <!-- Логотип -->
+                <Image Source="gravity_logo.png"
+                       HeightRequest="90"
+                       HorizontalOptions="Center"
+                       Margin="0,14,0,4" />
+
+                <Border Stroke="{StaticResource Line}"
+                        StrokeThickness="3"
+                        StrokeShape="RoundRectangle 18"
+                        Background="{StaticResource ParchmentBrush}">
+                    <Border.Shadow>
+                        <Shadow Opacity="0.45" Radius="18" Offset="0,8"/>
+                    </Border.Shadow>
+
+                    <VerticalStackLayout  Padding="36" Spacing="16" WidthRequest="400">
+
+                        <Label Text="Email" Style="{StaticResource FieldLabel}" />
+
+                        <Border Stroke="{StaticResource Line}"
+                                StrokeThickness="2"
+                                StrokeShape="RoundRectangle 12"
+                                BackgroundColor="#F9EFD6">
+                            <Entry Style="{StaticResource FieldEntry}"
+                                   Placeholder="name@example.com"
+                                   Keyboard="Email" />
+                        </Border>
+
+                        <Label Text="Password" Style="{StaticResource FieldLabel}" />
+
+                        <Border Stroke="{StaticResource Line}"
+                                StrokeThickness="2"
+                                StrokeShape="RoundRectangle 12"
+                                BackgroundColor="#F9EFD6">
+                            <Entry Style="{StaticResource FieldEntry}"
+                                   Placeholder="••••••••"
+                                   IsPassword="True" />
+                        </Border>
+
+                        <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                            
+                        </HorizontalStackLayout>
+                        
+                        <Button x:Name="RulesButton"
+                                Text="Rules"
+                                Style="{StaticResource LinkButton}"
+                                HorizontalOptions="Center"/>
+                        
+                        <Button x:Name="StartButton"
+                                Text="LOG IN"
+                                FontAttributes="Bold"
+                                FontSize="24"
+                                HeightRequest="52"
+                                CornerRadius="16"
+                                TextColor="White"
+                                BackgroundColor="{StaticResource Accent}">
+                            <Button.Shadow>
+                                <Shadow Opacity="0.35" Radius="12" Offset="0,6" />
+                            </Button.Shadow>
+                        </Button>
+
+                        
+
+                        <Button  x:Name="ExitButton"
+                                Text="EXIT"
+                                FontAttributes="Bold"
+                                FontSize="24"
+
+                                HeightRequest="52"
+                                CornerRadius="16"
+                                TextColor="Black"
+                                BackgroundColor="DarkGrey">
+                            <Button.Shadow>
+                                <Shadow Opacity="0.35" Radius="12" Offset="0,6" />
+                            </Button.Shadow>
+                        </Button>
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>
