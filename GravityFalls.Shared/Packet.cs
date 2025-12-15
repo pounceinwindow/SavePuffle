@@ -11,13 +11,10 @@ namespace GravityFalls.Shared
 
             var packet = new List<byte>();
             
-            // Header: Length (4 bytes)
             packet.AddRange(BitConverter.GetBytes(encryptedBody.Length + 1));
             
-            // Header: OpCode (1 byte)
             packet.Add((byte)code);
             
-            // Body: Encrypted JSON
             packet.AddRange(encryptedBody);
 
             return packet.ToArray();

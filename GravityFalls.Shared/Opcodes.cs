@@ -2,17 +2,15 @@ namespace GravityFalls.Shared
 {
     public enum OpCode : byte
     {
-        // Networking
         Login = 1,          
         LobbyUpdate = 2,    
         ToggleReady = 3,    
         StartGame = 4,
         
-        // Gameplay
-        RollDice = 10,      // Client -> Server
-        DiceResult = 11,    // Server -> Client (Animation)
-        GameState = 12,     // Server -> Client (Positions update)
-        GameOver = 13,       // Server -> Client
+        RollDice = 10,      
+        DiceResult = 11,  
+        GameState = 12,   
+        GameOver = 13,       
         
         Error = 255
     }
@@ -24,9 +22,9 @@ namespace GravityFalls.Shared
         Empty, 
         Start, 
         Finish, 
-        ArrowRed,   // Trap (Go back)
-        ArrowBlue,  // Boost (Go forward)
-        Mischief,   // Draw bad card
-        Help        // Draw good card
+        ArrowRed,   
+        ArrowBlue,  
+        Mischief, 
+        Help      
     }
 }

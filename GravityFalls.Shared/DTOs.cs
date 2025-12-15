@@ -1,13 +1,11 @@
 namespace GravityFalls.Shared
 {
-    // Login
     public class LoginDto 
     { 
         public string Email { get; set; } = ""; 
         public string Nickname { get; set; } = ""; 
     }
 
-    // Lobby
     public class LobbyStateDto
     {
         public List<LobbySlotDto> Slots { get; set; } = new();
@@ -22,12 +20,11 @@ namespace GravityFalls.Shared
         public bool IsEmpty { get; set; }
     }
 
-    // Game
     public class GameStateDto
     {
         public List<PlayerStateDto> Players { get; set; } = new();
         public int CurrentTurnPlayerId { get; set; }
-        public int WaddlesOwnerId { get; set; } // -1 if on board
+        public int WaddlesOwnerId { get; set; } 
     }
 
     public class PlayerStateDto

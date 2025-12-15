@@ -42,7 +42,6 @@ namespace GravityFalls.Server.Core
 
         public void Broadcast(byte[] packet)
         {
-            // Send to everyone connected
             foreach (var c in _clients.Where(x => x.IsConnected)) c.Send(packet);
         }
 

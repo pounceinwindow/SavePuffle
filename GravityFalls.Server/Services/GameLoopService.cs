@@ -27,30 +27,25 @@ namespace GravityFalls.Server.Services
 
         public void HandleDiceRoll(ClientSession player)
         {
-            // Validation: Is it this player's turn?
             if (_players[_currentTurnIndex].Id != player.Id) return;
 
             // 1. Roll Logic
             Random rnd = new Random();
             int roll = rnd.Next(1, 7);
 
-            // 2. Notify clients of roll (Animation)
             var rollPacket = Packet.Serialize(OpCode.DiceResult, new DiceResultDto { PlayerId = player.Id, Value = roll });
             _server.Broadcast(rollPacket);
 
-            // 3. Calculate Physics/Rules
             _movement.ProcessMove(player, roll, _players);
 
-            // 4. Check Win Condition
             if (player.Position >= 30 && player.HasWaddles)
             {
                 var winPacket = Packet.Serialize(OpCode.GameOver, new GameOverDto { WinnerName = player.Nickname });
                 _server.Broadcast(winPacket);
-                IsGameStarted = false; // Reset
+                IsGameStarted = false; 
             }
             else
             {
-                // 5. Next Turn
                 _currentTurnIndex = (_currentTurnIndex + 1) % _players.Count;
                 BroadcastState();
             }
