@@ -13,7 +13,6 @@ namespace GravityFalls.Server.Core
 
         public GameServer()
         {
-            // Initialize the Brain
             GameLoop = new GameLoopService(this);
         }
 

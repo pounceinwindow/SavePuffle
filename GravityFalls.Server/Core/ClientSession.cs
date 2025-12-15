@@ -11,7 +11,6 @@ namespace GravityFalls.Server.Core
         public bool IsReady { get; set; }
         public bool IsConnected => _client.Connected;
 
-        // Gameplay Data
         public int Position { get; set; } = 0;
         public bool HasWaddles { get; set; } = false;
 
@@ -39,18 +38,15 @@ namespace GravityFalls.Server.Core
             {
                 while (IsConnected)
                 {
-                    // 1. Read Length
                     int read = await _stream.ReadAsync(lenBuf, 0, 4);
                     if (read == 0) break;
                     int length = BitConverter.ToInt32(lenBuf, 0);
 
-                    // 2. Read Body
                     byte[] body = new byte[length];
                     int totalRead = 0;
                     while (totalRead < length)
                         totalRead += await _stream.ReadAsync(body, totalRead, length - totalRead);
 
-                    // 3. Process
                     OpCode op = (OpCode)body[0];
                     string json = "";
                     if (length > 1) json = CryptoHelper.Decrypt(body[1..]);

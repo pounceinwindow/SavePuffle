@@ -29,7 +29,6 @@ namespace GravityFalls.Server.Services
         {
             if (_players[_currentTurnIndex].Id != player.Id) return;
 
-            // 1. Roll Logic
             Random rnd = new Random();
             int roll = rnd.Next(1, 7);
 
