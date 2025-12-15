@@ -130,10 +130,6 @@
                             BackgroundColor="#E8C98A"
                             Padding="12,10"
                             VerticalOptions="Center">
-                        <HorizontalStackLayout Spacing="8">
-                            <Label Text="Код:" TextColor="{StaticResource Ink}" FontAttributes="Bold"/>
-                            <Label Text="DP-P9CR" TextColor="{StaticResource Ink}" FontAttributes="Bold"/>
-                        </HorizontalStackLayout>
                     </Border>
                 </Grid>
 
