@@ -1,6 +1,6 @@
-﻿using GravityFallsClient.Pages;
+﻿using GravityFalls.Client.Pages;
 
-namespace GravityFallsClient;
+namespace GravityFalls.Client;
 
 public partial class AppShell : Shell
 {
@@ -11,7 +11,7 @@ public partial class AppShell : Shell
         // TODO: Роуты (навигация черцез Shell.Current.GoToAsync(nameof(...)))
         Routing.RegisterRoute(nameof(CharacterSelectionPage), typeof(CharacterSelectionPage));
 
-        // На будущее,страницу игры:
-        // Routing.RegisterRoute(nameof(GamePage), typeof(GamePage));
+        // Страница игры
+        Routing.RegisterRoute(nameof(GamePage), typeof(GamePage));
     }
 }

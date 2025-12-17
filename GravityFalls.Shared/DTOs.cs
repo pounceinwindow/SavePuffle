@@ -1,9 +1,8 @@
 namespace GravityFalls.Shared
 {
-    public class LoginDto 
-    { 
-        public string Email { get; set; } = ""; 
-        public string Nickname { get; set; } = ""; 
+    public class LoginDto
+    {
+        public string Nickname { get; set; } = "";
     }
 
     public class LobbyStateDto
@@ -24,7 +23,7 @@ namespace GravityFalls.Shared
     {
         public List<PlayerStateDto> Players { get; set; } = new();
         public int CurrentTurnPlayerId { get; set; }
-        public int WaddlesOwnerId { get; set; } 
+        public int WaddlesOwnerId { get; set; }
     }
 
     public class PlayerStateDto
@@ -34,12 +33,12 @@ namespace GravityFalls.Shared
         public int Position { get; set; }
         public bool HasWaddles { get; set; }
     }
-    
+
     public class DiceResultDto
     {
         public int Value { get; set; }
         public int PlayerId { get; set; }
     }
-    
+
     public class GameOverDto { public string WinnerName { get; set; } = ""; }
 }

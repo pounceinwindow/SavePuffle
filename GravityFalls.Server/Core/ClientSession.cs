@@ -1,6 +1,6 @@
+using GravityFalls.Shared;
 using System.Net.Sockets;
 using System.Text.Json;
-using GravityFalls.Shared;
 
 namespace GravityFalls.Server.Core
 {
@@ -33,19 +33,21 @@ namespace GravityFalls.Server.Core
 
         public async Task ProcessLoop()
         {
-            byte[] lenBuf = new byte[4];
             try
             {
                 while (IsConnected)
                 {
-                    int read = await _stream.ReadAsync(lenBuf, 0, 4);
-                    if (read == 0) break;
+                    byte[] lenBuf = new byte[4];
+                    bool ok = await ReadExactAsync(_stream, lenBuf);
+                    if (!ok) break;
+
                     int length = BitConverter.ToInt32(lenBuf, 0);
+                    if (length <= 0 || length > 1024 * 1024)
+                        throw new InvalidOperationException($"Bad packet length: {length}");
 
                     byte[] body = new byte[length];
-                    int totalRead = 0;
-                    while (totalRead < length)
-                        totalRead += await _stream.ReadAsync(body, totalRead, length - totalRead);
+                    ok = await ReadExactAsync(_stream, body);
+                    if (!ok) break;
 
                     OpCode op = (OpCode)body[0];
                     string json = "";
@@ -58,13 +60,25 @@ namespace GravityFalls.Server.Core
             finally { _server.RemoveClient(this); _client.Close(); }
         }
 
+        private static async Task<bool> ReadExactAsync(NetworkStream stream, byte[] buffer)
+        {
+            int total = 0;
+            while (total < buffer.Length)
+            {
+                int read = await stream.ReadAsync(buffer, total, buffer.Length - total);
+                if (read == 0) return false;
+                total += read;
+            }
+            return true;
+        }
+
         private void HandlePacket(OpCode op, string json)
         {
             switch (op)
             {
                 case OpCode.Login:
                     var login = JsonSerializer.Deserialize<LoginDto>(json);
-                    Nickname = login.Nickname;
+                    Nickname = string.IsNullOrWhiteSpace(login?.Nickname) ? "Unknown" : login!.Nickname;
                     _server.BroadcastLobbySnapshot();
                     break;
                 case OpCode.ToggleReady:

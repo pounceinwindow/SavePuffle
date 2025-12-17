@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace SavePuffle
+namespace GravityFalls.Client
 {
     public static class MauiProgram
     {
@@ -15,10 +15,10 @@ namespace SavePuffle
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
-            builder.Services.AddSingleton<GravityFallsClient.AppShell>();
+            builder.Services.AddSingleton<AppShell>();
 
-            builder.Services.AddTransient<GravityFallsClient.Pages.MainMenuPage>();
-            builder.Services.AddTransient<GravityFallsClient.Pages.CharacterSelectionPage>();
+            builder.Services.AddTransient<Pages.MainMenuPage>();
+            builder.Services.AddTransient<Pages.CharacterSelectionPage>();
 #if DEBUG
             builder.Logging.AddDebug();
 #endif

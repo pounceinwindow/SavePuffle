@@ -10,11 +10,11 @@ namespace GravityFalls.Shared
             byte[] encryptedBody = CryptoHelper.Encrypt(json);
 
             var packet = new List<byte>();
-            
+
             packet.AddRange(BitConverter.GetBytes(encryptedBody.Length + 1));
-            
+
             packet.Add((byte)code);
-            
+
             packet.AddRange(encryptedBody);
 
             return packet.ToArray();

@@ -1,5 +1,5 @@
 <Solution>
-  <Project Path="../GravityFalls.Server/GravityFalls.Server.csproj" Id="a67779ac-3359-4d45-9898-a9f862b33993" />
-  <Project Path="../GravityFalls.Shared/GravityFalls.Shared.csproj" Id="9eac2f0f-e977-4149-9760-f6156864963c" />
-  <Project Path="../GravityFalls/GravityFalls.Client.csproj" />
+  <Project Path="GravityFalls.Server/GravityFalls.Server.csproj" Id="a67779ac-3359-4d45-9898-a9f862b33993" />
+  <Project Path="GravityFalls.Shared/GravityFalls.Shared.csproj" Id="9eac2f0f-e977-4149-9760-f6156864963c" />
+  <Project Path="GravityFalls.Client/GravityFalls.Client.csproj" />
 </Solution>

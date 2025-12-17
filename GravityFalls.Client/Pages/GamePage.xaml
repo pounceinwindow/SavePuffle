@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="GravityFalls.Client.Pages.GamePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Игра">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Color x:Key="Ink">#2B1B12</Color>
+            <Color x:Key="Parchment1">#F6E7C6</Color>
+            <Color x:Key="Parchment2">#EBD5A6</Color>
+            <Color x:Key="Line">#B8935E</Color>
+            <Color x:Key="Accent">#C85B23</Color>
+            <Color x:Key="Muted">#7A5E3C</Color>
+
+            <LinearGradientBrush x:Key="ParchmentBrush" EndPoint="0,1">
+                <GradientStop Color="{StaticResource Parchment1}" Offset="0" />
+                <GradientStop Color="{StaticResource Parchment2}" Offset="1" />
+            </LinearGradientBrush>
+
+            <Style TargetType="Label" x:Key="H1">
+                <Setter Property="TextColor" Value="{StaticResource Ink}" />
+                <Setter Property="FontSize" Value="24" />
+                <Setter Property="FontAttributes" Value="Bold" />
+            </Style>
+
+            <Style TargetType="Label" x:Key="H2">
+                <Setter Property="TextColor" Value="{StaticResource Ink}" />
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontAttributes" Value="Bold" />
+            </Style>
+
+            <Style TargetType="Label" x:Key="SmallMuted">
+                <Setter Property="TextColor" Value="{StaticResource Muted}" />
+                <Setter Property="FontSize" Value="12" />
+            </Style>
+
+            <Style TargetType="Button" x:Key="PrimaryButton">
+                <Setter Property="BackgroundColor" Value="{StaticResource Accent}" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="CornerRadius" Value="16" />
+                <Setter Property="HeightRequest" Value="50" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="FontSize" Value="18" />
+            </Style>
+
+            <Style TargetType="Button" x:Key="ChipButton">
+                <Setter Property="BackgroundColor" Value="#E8C98A" />
+                <Setter Property="TextColor" Value="{StaticResource Ink}" />
+                <Setter Property="CornerRadius" Value="14" />
+                <Setter Property="HeightRequest" Value="40" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="Padding" Value="14,0" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid>
+        <Image Source="wood_bg.png" Aspect="AspectFill" />
+        <BoxView Opacity="0.18" BackgroundColor="Black" />
+
+        <Grid Padding="16" RowDefinitions="Auto,*" RowSpacing="12">
+            <!-- Header -->
+            <Border Stroke="{StaticResource Line}" StrokeThickness="3" StrokeShape="RoundRectangle 18" Background="{StaticResource ParchmentBrush}">
+                <Border.Shadow>
+                    <Shadow Opacity="0.45" Radius="18" Offset="0,8" />
+                </Border.Shadow>
+
+                <Grid Padding="14" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" RowSpacing="4">
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="СПАСТИ ПУХЛЮ" Style="{StaticResource H1}" />
+                        <Label x:Name="MeLabel" Text="Вы: ..." Style="{StaticResource SmallMuted}" />
+                    </VerticalStackLayout>
+
+                    <Button x:Name="LeaveButton" Grid.Column="1" Text="Выйти" Style="{StaticResource ChipButton}" />
+
+                    <Label x:Name="TurnLabel" Grid.Row="1" Grid.ColumnSpan="2" Text="Ожидание..." TextColor="{StaticResource Ink}" FontAttributes="Bold" />
+                </Grid>
+            </Border>
+
+            <!-- Body -->
+            <Grid Grid.Row="1" ColumnDefinitions="*,12,320" RowDefinitions="*">
+
+                <!-- Board -->
+                <Border Grid.Column="0" Stroke="{StaticResource Line}" StrokeThickness="3" StrokeShape="RoundRectangle 18" Background="{StaticResource ParchmentBrush}">
+                    <Border.Shadow>
+                        <Shadow Opacity="0.35" Radius="16" Offset="0,6" />
+                    </Border.Shadow>
+
+                    <Grid Padding="12" RowDefinitions="Auto,*" RowSpacing="10">
+                        <Label Text="Поле (0 → 30)" Style="{StaticResource H2}" />
+
+                        <ScrollView Grid.Row="1" Orientation="Both">
+                            <Grid>
+                                <!-- Cells + pawns are built in code-behind -->
+                                <AbsoluteLayout x:Name="BoardAbs" />
+                            </Grid>
+                        </ScrollView>
+                    </Grid>
+                </Border>
+
+                <!-- Sidebar -->
+                <Border Grid.Column="2" Stroke="{StaticResource Line}" StrokeThickness="3" StrokeShape="RoundRectangle 18" Background="{StaticResource ParchmentBrush}">
+                    <Border.Shadow>
+                        <Shadow Opacity="0.35" Radius="16" Offset="0,6" />
+                    </Border.Shadow>
+
+                    <VerticalStackLayout Padding="14" Spacing="12">
+                        <Label Text="Игроки" Style="{StaticResource H2}" />
+
+                        <CollectionView x:Name="PlayersView" HeightRequest="240">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Stroke="{StaticResource Line}" StrokeThickness="2" StrokeShape="RoundRectangle 14" BackgroundColor="#F9EFD6" Padding="10" Margin="0,0,0,6">
+                                        <Label Text="{Binding .}" TextColor="{StaticResource Ink}" FontAttributes="Bold" />
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
+                        <Border Stroke="{StaticResource Line}" StrokeThickness="2" StrokeShape="RoundRectangle 16" BackgroundColor="#F9EFD6" Padding="12">
+                            <VerticalStackLayout Spacing="8">
+                                <Label Text="Кубик" Style="{StaticResource H2}" />
+
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" VerticalOptions="Center">
+                                    <Border x:Name="DiceBox" Stroke="{StaticResource Line}" StrokeThickness="2" StrokeShape="RoundRectangle 16" BackgroundColor="#FFFFFF" WidthRequest="74" HeightRequest="74">
+                                        <Label x:Name="DiceFace" Text="?" FontSize="28" FontAttributes="Bold" TextColor="{StaticResource Ink}" HorizontalOptions="Center" VerticalOptions="Center" />
+                                    </Border>
+
+                                    <VerticalStackLayout Grid.Column="1" Spacing="6">
+                                        <Button x:Name="RollButton" Text="БРОСИТЬ" Style="{StaticResource PrimaryButton}" />
+                                        <Label x:Name="HintLabel" Text="Ходит только текущий игрок." Style="{StaticResource SmallMuted}" />
+                                    </VerticalStackLayout>
+                                </Grid>
+
+                                <Label x:Name="LogLabel" Text="" Style="{StaticResource SmallMuted}" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Stroke="{StaticResource Line}" StrokeThickness="2" StrokeShape="RoundRectangle 16" BackgroundColor="#E8C98A" Padding="12">
+                            <Label Text="🐷 Пухля: чтобы победить — дойти до 30 и держать Пухлю. С Пухлей за ход максимум 3 клетки." TextColor="{StaticResource Ink}" FontAttributes="Bold" />
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
+            </Grid>
+        </Grid>
+    </Grid>
+</ContentPage>

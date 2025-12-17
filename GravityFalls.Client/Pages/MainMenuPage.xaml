@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-    x:Class="GravityFallsClient.Pages.MainMenuPage"
+    x:Class="GravityFalls.Client.Pages.MainMenuPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="Main Menu">
@@ -68,26 +68,26 @@
 
                     <VerticalStackLayout  Padding="36" Spacing="16" WidthRequest="400">
 
-                        <Label Text="Email" Style="{StaticResource FieldLabel}" />
+                        <Label Text="Nickname" Style="{StaticResource FieldLabel}" />
 
                         <Border Stroke="{StaticResource Line}"
                                 StrokeThickness="2"
                                 StrokeShape="RoundRectangle 12"
                                 BackgroundColor="#F9EFD6">
-                            <Entry Style="{StaticResource FieldEntry}"
-                                   Placeholder="name@example.com"
-                                   Keyboard="Email" />
+                            <Entry x:Name="NicknameEntry"
+                                   Style="{StaticResource FieldEntry}"
+                                   Placeholder="Dipper" />
                         </Border>
 
-                        <Label Text="Password" Style="{StaticResource FieldLabel}" />
+                        <Label Text="Server" Style="{StaticResource FieldLabel}" />
 
                         <Border Stroke="{StaticResource Line}"
                                 StrokeThickness="2"
                                 StrokeShape="RoundRectangle 12"
                                 BackgroundColor="#F9EFD6">
-                            <Entry Style="{StaticResource FieldEntry}"
-                                   Placeholder="••••••••"
-                                   IsPassword="True" />
+                            <Entry x:Name="ServerEntry"
+                                   Style="{StaticResource FieldEntry}"
+                                   Placeholder="127.0.0.1:8888" />
                         </Border>
 
                         <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
@@ -100,7 +100,7 @@
                                 HorizontalOptions="Center"/>
                         
                         <Button x:Name="StartButton"
-                                Text="LOG IN"
+                                Text="PLAY"
                                 FontAttributes="Bold"
                                 FontSize="24"
                                 HeightRequest="52"

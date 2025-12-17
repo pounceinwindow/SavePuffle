@@ -16,10 +16,10 @@ namespace GravityFalls.Server.Services
         private void GenerateMap()
         {
             _map = new List<TileType>();
-            for(int i=0; i<=FINISH_LINE; i++) _map.Add(TileType.Empty);
-            
-            _map[5] = TileType.ArrowBlue; 
-            _map[12] = TileType.ArrowRed; 
+            for (int i = 0; i <= FINISH_LINE; i++) _map.Add(TileType.Empty);
+
+            _map[5] = TileType.ArrowBlue;
+            _map[12] = TileType.ArrowRed;
             _map[20] = TileType.Mischief;
             _map[30] = TileType.Finish;
         }
@@ -45,16 +45,16 @@ namespace GravityFalls.Server.Services
                     player.HasWaddles = true;
                 }
             }
-            else if (allPlayers.All(p => !p.HasWaddles) && endPos >= 10) 
+            else if (allPlayers.All(p => !p.HasWaddles) && endPos >= 10)
             {
-                 player.HasWaddles = true;
+                player.HasWaddles = true;
             }
 
             player.Position = Math.Min(endPos, FINISH_LINE);
 
             if (_map[player.Position] == TileType.ArrowBlue) player.Position += 2;
             if (_map[player.Position] == TileType.ArrowRed) player.Position -= 2;
-            
+
             if (player.Position < 0) player.Position = 0;
             if (player.Position > FINISH_LINE) player.Position = FINISH_LINE;
         }

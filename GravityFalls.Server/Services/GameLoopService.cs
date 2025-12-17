@@ -41,7 +41,7 @@ namespace GravityFalls.Server.Services
             {
                 var winPacket = Packet.Serialize(OpCode.GameOver, new GameOverDto { WinnerName = player.Nickname });
                 _server.Broadcast(winPacket);
-                IsGameStarted = false; 
+                IsGameStarted = false;
             }
             else
             {
@@ -59,13 +59,13 @@ namespace GravityFalls.Server.Services
             foreach (var p in _players)
             {
                 if (p.HasWaddles) state.WaddlesOwnerId = p.Id;
-                
-                state.Players.Add(new PlayerStateDto 
-                { 
-                    Id = p.Id, 
-                    Name = p.Nickname, 
-                    Position = p.Position, 
-                    HasWaddles = p.HasWaddles 
+
+                state.Players.Add(new PlayerStateDto
+                {
+                    Id = p.Id,
+                    Name = p.Nickname,
+                    Position = p.Position,
+                    HasWaddles = p.HasWaddles
                 });
             }
 

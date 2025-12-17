@@ -1,6 +1,6 @@
-﻿using GravityFallsClient;
+﻿using GravityFalls.Client.Pages;
 
-namespace SavePuffle;
+namespace GravityFalls.Client;
 
 public partial class App : Application
 {

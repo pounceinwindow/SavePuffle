@@ -64,13 +64,23 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="../GravityFalls.Shared/GravityFalls.Shared.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Compile Update="Pages\CharacterSelectionPage.xaml.cs">
 	    <DependentUpon>CharacterSelectionPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Pages\GamePage.xaml.cs">
+	    <DependentUpon>GamePage.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
 	  <MauiXaml Update="Pages\CharacterSelectionPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\GamePage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

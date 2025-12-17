@@ -1,7 +1,7 @@
-using System.Net;
-using System.Net.Sockets;
 using GravityFalls.Server.Services;
 using GravityFalls.Shared;
+using System.Net;
+using System.Net.Sockets;
 
 namespace GravityFalls.Server.Core
 {
@@ -25,7 +25,7 @@ namespace GravityFalls.Server.Core
             while (true)
             {
                 var tcpClient = await _listener.AcceptTcpClientAsync();
-                
+
                 if (_clients.Count >= 4 || GameLoop.IsGameStarted)
                 {
                     Console.WriteLine("Connection rejected (Full or Started)");
@@ -52,11 +52,12 @@ namespace GravityFalls.Server.Core
                 if (i < _clients.Count)
                 {
                     var c = _clients[i];
-                    snapshot.Slots.Add(new LobbySlotDto { 
-                        SlotIndex = i, 
-                        DisplayText = c.Nickname, 
-                        IsReady = c.IsReady, 
-                        IsEmpty = false 
+                    snapshot.Slots.Add(new LobbySlotDto
+                    {
+                        SlotIndex = i,
+                        DisplayText = c.Nickname,
+                        IsReady = c.IsReady,
+                        IsEmpty = false
                     });
                 }
                 else
@@ -69,7 +70,7 @@ namespace GravityFalls.Server.Core
 
         public void CheckAllReady()
         {
-            if (_clients.Count > 0 && _clients.All(c => c.IsReady))
+            if (_clients.Count == 4 && _clients.All(c => c.IsReady))
             {
                 Console.WriteLine("All Ready! Starting Game...");
                 Broadcast(Packet.Serialize(OpCode.StartGame, new object()));

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SavePuffle.ViewModel
+﻿namespace SavePuffle.ViewModel
 {
     internal class LoginViewModel
     {
