@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GravityFalls.Server")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8d8f40342deccd00831e19f05d3e97a708b09aad")]
 [assembly: System.Reflection.AssemblyProductAttribute("GravityFalls.Server")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GravityFalls.Server")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
