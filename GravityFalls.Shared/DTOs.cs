@@ -5,6 +5,29 @@ namespace GravityFalls.Shared
         public string Nickname { get; set; } = "";
     }
 
+    public class SelectHeroDto
+    {
+        public HeroType Hero { get; set; }
+    }
+
+    public class ExchangeDto
+    {
+        // no fields for now (request = "try exchange")
+    }
+
+    public enum GameEventKind : byte
+    {
+        Info = 0,
+        Good = 1,
+        Bad = 2,
+    }
+
+    public class GameEventDto
+    {
+        public GameEventKind Kind { get; set; } = GameEventKind.Info;
+        public string Message { get; set; } = "";
+    }
+
     public class LobbyStateDto
     {
         public List<LobbySlotDto> Slots { get; set; } = new();
@@ -14,7 +37,9 @@ namespace GravityFalls.Shared
     public class LobbySlotDto
     {
         public int SlotIndex { get; set; }
-        public string DisplayText { get; set; } = "";
+        public int PlayerId { get; set; } = -1;
+        public string Nickname { get; set; } = "";
+        public HeroType Hero { get; set; } = HeroType.Dipper;
         public bool IsReady { get; set; }
         public bool IsEmpty { get; set; }
     }
@@ -23,15 +48,30 @@ namespace GravityFalls.Shared
     {
         public List<PlayerStateDto> Players { get; set; } = new();
         public int CurrentTurnPlayerId { get; set; }
-        public int WaddlesOwnerId { get; set; }
+
+        /// <summary>-1 = not spawned (until Signpost), otherwise 0..30</summary>
+        public int WaddlesPosition { get; set; } = -1;
+
+        /// <summary>-1 = on board, otherwise player Id who carries Waddles</summary>
+        public int WaddlesCarrierId { get; set; } = -1;
+
+        /// <summary>Optional: last dice value, useful for UI.</summary>
+        public int LastDiceValue { get; set; } = 0;
     }
 
     public class PlayerStateDto
     {
         public int Id { get; set; }
         public string Name { get; set; } = "";
+        public HeroType Hero { get; set; } = HeroType.Dipper;
         public int Position { get; set; }
-        public bool HasWaddles { get; set; }
+
+        // Variant A: tokens instead of card hands
+        public int HelpTokens { get; set; } = 0;
+        public int MischiefTokens { get; set; } = 0;
+
+        public bool SkipNextTurn { get; set; } = false;
+        public bool HasWaddles { get; set; } = false;
     }
 
     public class DiceResultDto
@@ -40,5 +80,8 @@ namespace GravityFalls.Shared
         public int PlayerId { get; set; }
     }
 
-    public class GameOverDto { public string WinnerName { get; set; } = ""; }
+    public class GameOverDto
+    {
+        public string WinnerName { get; set; } = "";
+    }
 }

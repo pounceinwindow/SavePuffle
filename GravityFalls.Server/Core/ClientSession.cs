@@ -11,12 +11,17 @@ namespace GravityFalls.Server.Core
         public bool IsReady { get; set; }
         public bool IsConnected => _client.Connected;
 
+        // Game state (server-authoritative)
         public int Position { get; set; } = 0;
         public bool HasWaddles { get; set; } = false;
+        public HeroType Hero { get; set; } = HeroType.Dipper;
+        public int HelpTokens { get; set; } = 0;
+        public int MischiefTokens { get; set; } = 0;
+        public bool SkipNextTurn { get; set; } = false;
 
-        private TcpClient _client;
-        private NetworkStream _stream;
-        private GameServer _server;
+        private readonly TcpClient _client;
+        private readonly NetworkStream _stream;
+        private readonly GameServer _server;
 
         public ClientSession(TcpClient client, GameServer server, int id)
         {
@@ -28,7 +33,8 @@ namespace GravityFalls.Server.Core
 
         public void Send(byte[] data)
         {
-            if (IsConnected) try { _stream.Write(data); } catch { }
+            if (!IsConnected) return;
+            try { _stream.Write(data); } catch { /* ignore */ }
         }
 
         public async Task ProcessLoop()
@@ -50,14 +56,20 @@ namespace GravityFalls.Server.Core
                     if (!ok) break;
 
                     OpCode op = (OpCode)body[0];
-                    string json = "";
-                    if (length > 1) json = CryptoHelper.Decrypt(body[1..]);
+                    string json = length > 1 ? CryptoHelper.Decrypt(body[1..]) : "";
 
                     HandlePacket(op, json);
                 }
             }
-            catch { Console.WriteLine($"Client {Id} Error"); }
-            finally { _server.RemoveClient(this); _client.Close(); }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Client {Id} error: {ex.Message}");
+            }
+            finally
+            {
+                _server.RemoveClient(this);
+                try { _client.Close(); } catch { }
+            }
         }
 
         private static async Task<bool> ReadExactAsync(NetworkStream stream, byte[] buffer)
@@ -77,17 +89,35 @@ namespace GravityFalls.Server.Core
             switch (op)
             {
                 case OpCode.Login:
-                    var login = JsonSerializer.Deserialize<LoginDto>(json);
-                    Nickname = string.IsNullOrWhiteSpace(login?.Nickname) ? "Unknown" : login!.Nickname;
-                    _server.BroadcastLobbySnapshot();
-                    break;
+                    {
+                        var login = JsonSerializer.Deserialize<LoginDto>(json);
+                        Nickname = string.IsNullOrWhiteSpace(login?.Nickname) ? $"Player{Id}" : login!.Nickname.Trim();
+                        _server.BroadcastLobbySnapshot();
+                        break;
+                    }
+                case OpCode.SelectHero:
+                    {
+                        var dto = JsonSerializer.Deserialize<SelectHeroDto>(json);
+                        if (dto != null)
+                        {
+                            Hero = dto.Hero;
+                            _server.BroadcastLobbySnapshot();
+                        }
+                        break;
+                    }
                 case OpCode.ToggleReady:
-                    IsReady = !IsReady;
-                    _server.BroadcastLobbySnapshot();
-                    _server.CheckAllReady();
-                    break;
+                    {
+                        IsReady = !IsReady;
+                        _server.BroadcastLobbySnapshot();
+                        _server.CheckAllReady();
+                        break;
+                    }
                 case OpCode.RollDice:
                     _server.GameLoop.HandleDiceRoll(this);
+                    break;
+
+                case OpCode.Exchange:
+                    _server.GameLoop.TryExchange(this);
                     break;
             }
         }

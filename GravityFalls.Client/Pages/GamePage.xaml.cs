@@ -11,14 +11,15 @@ public partial class GamePage : ContentPage
     private const int Cols = 8;
     private const int Rows = 4;
 
-    private const double CellSize = 70;
-    private const double Gap = 6;
+    private const double CellSize = 72;
+    private const double Gap = 8;
     private const double Pad = 12;
     private const double PawnSize = 28;
 
     private readonly Dictionary<int, Rect> _cellRects = new();
     private readonly Dictionary<int, Label> _pawnViews = new();
-    private readonly ObservableCollection<string> _playerLines = new();
+    private readonly ObservableCollection<PlayerCardVm> _playerCards = new();
+    private readonly ObservableCollection<string> _events = new();
 
     private readonly Label _waddles = new()
     {
@@ -28,7 +29,7 @@ public partial class GamePage : ContentPage
         VerticalTextAlignment = TextAlignment.Center,
         WidthRequest = PawnSize,
         HeightRequest = PawnSize,
-        ZIndex = 20
+        ZIndex = 30
     };
 
     private int _myId = -1;
@@ -40,18 +41,21 @@ public partial class GamePage : ContentPage
     {
         InitializeComponent();
 
-        PlayersView.ItemsSource = _playerLines;
+        PlayersView.ItemsSource = _playerCards;
+        EventsView.ItemsSource = _events;
 
         MeLabel.Text = $"Вы: {GameClient.Instance.Nickname}";
 
         RollButton.Clicked += async (_, __) => await OnRollClickedAsync();
+        ExchangeButton.Clicked += async (_, __) => await OnExchangeAsync();
         LeaveButton.Clicked += async (_, __) => await OnLeaveAsync();
 
         BuildBoardOnce();
 
-        // If we navigated after StartGame, we may already have state.
         if (GameClient.Instance.LastGameState != null)
             ApplyState(GameClient.Instance.LastGameState, animate: false);
+        if (GameClient.Instance.LastDiceResult != null)
+            SetDiceFace(GameClient.Instance.LastDiceResult.Value);
     }
 
     protected override void OnAppearing()
@@ -59,11 +63,11 @@ public partial class GamePage : ContentPage
         base.OnAppearing();
         GameClient.Instance.GameStateUpdated += OnGameState;
         GameClient.Instance.DiceResultReceived += OnDiceResult;
+        GameClient.Instance.GameEventReceived += OnGameEvent;
         GameClient.Instance.GameOver += OnGameOver;
         GameClient.Instance.Error += OnError;
         GameClient.Instance.Disconnected += OnDisconnected;
 
-        // Apply cached values (if any)
         if (GameClient.Instance.LastGameState != null)
             ApplyState(GameClient.Instance.LastGameState, animate: false);
         if (GameClient.Instance.LastDiceResult != null)
@@ -74,6 +78,7 @@ public partial class GamePage : ContentPage
     {
         GameClient.Instance.GameStateUpdated -= OnGameState;
         GameClient.Instance.DiceResultReceived -= OnDiceResult;
+        GameClient.Instance.GameEventReceived -= OnGameEvent;
         GameClient.Instance.GameOver -= OnGameOver;
         GameClient.Instance.Error -= OnError;
         GameClient.Instance.Disconnected -= OnDisconnected;
@@ -82,14 +87,12 @@ public partial class GamePage : ContentPage
 
     private void BuildBoardOnce()
     {
-        // Fixed-size board (scrollable), so pawn animation is predictable.
         BoardAbs.WidthRequest = Pad * 2 + Cols * CellSize + (Cols - 1) * Gap;
         BoardAbs.HeightRequest = Pad * 2 + Rows * CellSize + (Rows - 1) * Gap;
 
         BoardAbs.Children.Clear();
         _cellRects.Clear();
 
-        // Build cells 0..31 (31 is just a filler, because 8x4=32).
         for (int pos = 0; pos < Cols * Rows; pos++)
         {
             (int r, int c) = PosToRowCol(pos);
@@ -104,33 +107,55 @@ public partial class GamePage : ContentPage
             _cellRects[pos] = new Rect(x, y, CellSize, CellSize);
         }
 
-        // Add pig token (moves between owners)
         AbsoluteLayout.SetLayoutBounds(_waddles, new Rect(0, 0, PawnSize, PawnSize));
         AbsoluteLayout.SetLayoutFlags(_waddles, AbsoluteLayoutFlags.None);
         _waddles.TranslationX = -9999;
         _waddles.TranslationY = -9999;
         BoardAbs.Children.Add(_waddles);
-
-        // Add 4 pawn placeholders (created lazily when we know player IDs)
     }
 
     private View CreateCell(int pos)
     {
+        if (pos > BoardConfig.FinishLine)
+        {
+            return new Border
+            {
+                Stroke = Color.FromArgb("#B8935E"),
+                StrokeThickness = 2,
+                StrokeShape = new RoundRectangle { CornerRadius = 14 },
+                BackgroundColor = Color.FromArgb("#F9EFD6"),
+                Content = new Label
+                {
+                    Text = "—",
+                    HorizontalOptions = LayoutOptions.Center,
+                    VerticalOptions = LayoutOptions.Center,
+                    TextColor = Color.FromArgb("#2B1B12"),
+                    FontAttributes = FontAttributes.Bold
+                }
+            };
+        }
+
+        TileType tile = BoardConfig.GetTile(pos);
         string title = pos switch
         {
             0 => "START",
             30 => "FINISH",
-            31 => "—",
             _ => pos.ToString()
         };
 
-        string icon = pos switch
+        (string icon, string sub) = TileToIcon(tile, pos);
+
+        Color bg = tile switch
         {
-            5 => "🔵➡️+2",
-            12 => "🔴⬅️-2",
-            20 => "😈",
-            30 => "🏁",
-            _ => ""
+            TileType.Start => Color.FromArgb("#E8C98A"),
+            TileType.Finish => Color.FromArgb("#FFD6A6"),
+            TileType.Mischief => Color.FromArgb("#F6D0D0"),
+            TileType.Help => Color.FromArgb("#D9F4DA"),
+            TileType.Exchange => Color.FromArgb("#E8C98A"),
+            TileType.SkipTurn => Color.FromArgb("#F0E2FF"),
+            TileType.ExtraTurn => Color.FromArgb("#D9E8FF"),
+            TileType.DiscardHelp => Color.FromArgb("#FFECC7"),
+            _ => Color.FromArgb("#F9EFD6")
         };
 
         var border = new Border
@@ -138,15 +163,10 @@ public partial class GamePage : ContentPage
             Stroke = Color.FromArgb("#B8935E"),
             StrokeThickness = 2,
             StrokeShape = new RoundRectangle { CornerRadius = 14 },
-            BackgroundColor = pos switch
-            {
-                0 => Color.FromArgb("#E8C98A"),
-                30 => Color.FromArgb("#FFD6A6"),
-                _ => Color.FromArgb("#F9EFD6")
-            }
+            BackgroundColor = bg
         };
 
-        var grid = new Grid { RowDefinitions = new RowDefinitionCollection { new RowDefinition(GridLength.Auto), new RowDefinition(GridLength.Star) } };
+        var grid = new Grid { RowDefinitions = new RowDefinitionCollection { new RowDefinition(GridLength.Auto), new RowDefinition(GridLength.Star), new RowDefinition(GridLength.Auto) } };
 
         grid.Add(new Label
         {
@@ -160,24 +180,48 @@ public partial class GamePage : ContentPage
         grid.Add(new Label
         {
             Text = icon,
-            FontSize = 14,
+            FontSize = 16,
             TextColor = Color.FromArgb("#2B1B12"),
             HorizontalTextAlignment = TextAlignment.Center,
             VerticalTextAlignment = TextAlignment.Center
         }, 0, 1);
 
+        grid.Add(new Label
+        {
+            Text = sub,
+            FontSize = 10,
+            TextColor = Color.FromArgb("#7A5E3C"),
+            HorizontalTextAlignment = TextAlignment.Center,
+            Margin = new Thickness(0, 0, 0, 4)
+        }, 0, 2);
+
         border.Content = grid;
         return border;
     }
 
+    private static (string icon, string sub) TileToIcon(TileType tile, int pos)
+    {
+        return tile switch
+        {
+            TileType.ArrowBlue => ("🔵➡️", BoardConfig.ArrowDeltaByPos.TryGetValue(pos, out var d1) ? $"+{d1}" : ""),
+            TileType.ArrowRed => ("🔴⬅️", BoardConfig.ArrowDeltaByPos.TryGetValue(pos, out var d2) ? d2.ToString() : ""),
+            TileType.Mischief => ("😈", "+1😈"),
+            TileType.Help => ("✨", "+1✨"),
+            TileType.Exchange => ("♻️", "обмен"),
+            TileType.ExtraTurn => ("🔁", "ещё ход"),
+            TileType.SkipTurn => ("💤", "пропуск"),
+            TileType.DiscardHelp => ("🗑", "сброс"),
+            TileType.Signpost => ("🪧", "указатель"),
+            TileType.Totem => ("🗿", "тотем"),
+            TileType.Finish => ("🏁", "победа"),
+            TileType.Start => ("🚩", "старт"),
+            _ => ("", "")
+        };
+    }
+
     private static (int row, int col) PosToRowCol(int pos)
     {
-        // Snake layout:
-        // Row 3:  0..7   left->right
-        // Row 2:  8..15  right->left
-        // Row 1: 16..23  left->right
-        // Row 0: 24..31  right->left
-        int rowFromBottom = pos / Cols; // 0..3
+        int rowFromBottom = pos / Cols;
         int row = (Rows - 1) - rowFromBottom;
 
         int idxInRow = pos % Cols;
@@ -208,7 +252,8 @@ public partial class GamePage : ContentPage
         }
 
         RollButton.IsEnabled = false;
-        LogLabel.Text = "Отправили RollDice...";
+        ExchangeButton.IsEnabled = false;
+        HintLabel.Text = "Бросаем кубик...";
 
         StartDiceAnimation();
 
@@ -221,9 +266,20 @@ public partial class GamePage : ContentPage
             StopDiceAnimation();
             await DisplayAlert("Network", ex.Message, "OK");
         }
-        finally
+    }
+
+    private async Task OnExchangeAsync()
+    {
+        if (_state == null) return;
+        if (_myId < 0 || _state.CurrentTurnPlayerId != _myId) return;
+
+        try
         {
-            // сервер пришлёт DiceResult + GameState, они уже включат/выключат кнопку
+            await GameClient.Instance.ExchangeAsync();
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Network", ex.Message, "OK");
         }
     }
 
@@ -248,16 +304,35 @@ public partial class GamePage : ContentPage
             StopDiceAnimation();
             SetDiceFace(roll.Value);
 
-            // Animation #1 (dice): little bounce on result.
             try
             {
                 await DiceBox.ScaleTo(1.15, 120, Easing.CubicOut);
                 await DiceBox.ScaleTo(1.0, 140, Easing.CubicIn);
             }
-            catch { /* ignore */ }
+            catch { }
 
-            LogLabel.Text = $"{NameById(roll.PlayerId)} бросил: {roll.Value}";
+            AddEvent($"🎲 {NameById(roll.PlayerId)} бросил: {roll.Value}");
         });
+    }
+
+    private void OnGameEvent(GameEventDto ev)
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            string prefix = ev.Kind switch
+            {
+                GameEventKind.Good => "✅ ",
+                GameEventKind.Bad => "⚠️ ",
+                _ => "ℹ️ "
+            };
+            AddEvent(prefix + ev.Message);
+        });
+    }
+
+    private void AddEvent(string text)
+    {
+        _events.Insert(0, text);
+        while (_events.Count > 20) _events.RemoveAt(_events.Count - 1);
     }
 
     private void OnGameOver(GameOverDto over)
@@ -266,6 +341,7 @@ public partial class GamePage : ContentPage
         {
             StopDiceAnimation();
             RollButton.IsEnabled = false;
+            ExchangeButton.IsEnabled = false;
 
             string msg = over.WinnerName == GameClient.Instance.Nickname
                 ? "Ты спас Пухлю! 🎉"
@@ -290,6 +366,7 @@ public partial class GamePage : ContentPage
         {
             StopDiceAnimation();
             RollButton.IsEnabled = false;
+            ExchangeButton.IsEnabled = false;
             await DisplayAlert("Disconnected", "Соединение с сервером потеряно.", "OK");
             await Shell.Current.GoToAsync("//MainMenuPage");
         });
@@ -299,20 +376,11 @@ public partial class GamePage : ContentPage
     {
         _state = state;
 
-        // Resolve my ID once (server doesn't send explicit 'you are X', so match by nickname)
+        // Resolve my ID (match by nickname)
         if (_myId < 0)
         {
             var me = state.Players.FirstOrDefault(p => p.Name == GameClient.Instance.Nickname);
             if (me != null) _myId = me.Id;
-        }
-
-        // Sidebar list
-        _playerLines.Clear();
-        foreach (var p in state.Players.OrderBy(p => p.Id))
-        {
-            string turn = p.Id == state.CurrentTurnPlayerId ? "➡️" : "  ";
-            string waddles = p.HasWaddles ? " 🐷" : "";
-            _playerLines.Add($"{turn} {p.Name} • клетка {p.Position}{waddles}");
         }
 
         // Header
@@ -321,22 +389,49 @@ public partial class GamePage : ContentPage
             ? $"Вы: {GameClient.Instance.Nickname} (id={_myId})"
             : $"Вы: {GameClient.Instance.Nickname}";
 
-        // Roll button availability
-        RollButton.IsEnabled = (_myId >= 0 && state.CurrentTurnPlayerId == _myId);
+        WaddlesInfo.Text = state.WaddlesPosition < 0
+            ? "🐷 ещё не найден (ищи 🪧)"
+            : (state.WaddlesCarrierId >= 0
+                ? $"🐷 у {NameById(state.WaddlesCarrierId)}"
+                : $"🐷 на клетке {state.WaddlesPosition}");
 
-        // Pawns + movement
+        // Player cards
+        _playerCards.Clear();
+        foreach (var p in state.Players.OrderBy(p => p.Id))
+        {
+            _playerCards.Add(new PlayerCardVm
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Hero = p.Hero,
+                Position = p.Position,
+                HelpTokens = p.HelpTokens,
+                MischiefTokens = p.MischiefTokens,
+                HasWaddles = (state.WaddlesCarrierId == p.Id),
+                IsTurn = (state.CurrentTurnPlayerId == p.Id),
+                SkipNextTurn = p.SkipNextTurn,
+                IsMe = (_myId == p.Id)
+            });
+        }
+
+        // Buttons
+        bool isMyTurn = (_myId >= 0 && state.CurrentTurnPlayerId == _myId);
+        RollButton.IsEnabled = isMyTurn;
+
+        ExchangeButton.IsEnabled = isMyTurn && CanExchange();
+        HintLabel.Text = isMyTurn ? "Твой ход." : "Ожидание хода.";
+
+        // Pawns
         foreach (var p in state.Players)
         {
-            EnsurePawn(p.Id);
+            EnsurePawn(p.Id, p.Hero);
             MovePawn(p.Id, p.Position, animate);
         }
 
-        // Pig token follows the owner (if any)
-        var owner = state.Players.FirstOrDefault(p => p.HasWaddles);
-        if (owner != null)
+        // Waddles token
+        if (state.WaddlesPosition >= 0)
         {
-            EnsurePawn(owner.Id);
-            MoveWaddles(owner.Id, owner.Position, animate);
+            MoveWaddles(state.WaddlesPosition, state.WaddlesCarrierId, animate);
         }
         else
         {
@@ -344,23 +439,40 @@ public partial class GamePage : ContentPage
             _waddles.TranslationY = -9999;
         }
 
-        // Little turn highlight pulse (Animation #2 is pawn movement; this is extra but ok)
         TryPulseCurrentTurn(state.CurrentTurnPlayerId);
     }
 
-    private void EnsurePawn(int playerId)
+    private bool CanExchange()
     {
-        if (_pawnViews.ContainsKey(playerId)) return;
+        if (_state == null || _myId < 0) return false;
+
+        var me = _state.Players.FirstOrDefault(p => p.Id == _myId);
+        if (me == null) return false;
+
+        if (BoardConfig.GetTile(me.Position) != TileType.Exchange) return false;
+
+        int cost = me.Hero == HeroType.Wendy ? 1 : 2;
+        return me.MischiefTokens >= cost;
+    }
+
+    private void EnsurePawn(int playerId, HeroType hero)
+    {
+        if (_pawnViews.ContainsKey(playerId))
+        {
+            // Update emoji if needed
+            _pawnViews[playerId].Text = HeroInfo.Emoji(hero);
+            return;
+        }
 
         var pawn = new Label
         {
-            Text = PawnEmoji(playerId),
+            Text = HeroInfo.Emoji(hero),
             FontSize = 22,
             WidthRequest = PawnSize,
             HeightRequest = PawnSize,
             HorizontalTextAlignment = TextAlignment.Center,
             VerticalTextAlignment = TextAlignment.Center,
-            ZIndex = 10
+            ZIndex = 20
         };
 
         AbsoluteLayout.SetLayoutBounds(pawn, new Rect(0, 0, PawnSize, PawnSize));
@@ -377,7 +489,6 @@ public partial class GamePage : ContentPage
         if (!_pawnViews.TryGetValue(playerId, out var pawn)) return;
         if (!_cellRects.TryGetValue(position, out var cell)) return;
 
-        // Offset per player so they don't overlap in the same cell
         var offset = OffsetForPlayer(playerId);
 
         double targetX = cell.X + (cell.Width / 2) - (PawnSize / 2) + offset.X;
@@ -393,15 +504,14 @@ public partial class GamePage : ContentPage
         _ = pawn.TranslateTo(targetX, targetY, 420, Easing.CubicInOut);
     }
 
-    private void MoveWaddles(int ownerId, int position, bool animate)
+    private void MoveWaddles(int position, int carrierId, bool animate)
     {
         if (!_cellRects.TryGetValue(position, out var cell)) return;
 
-        // Place pig slightly above the owner's pawn.
-        var ownerOffset = OffsetForPlayer(ownerId);
+        var offset = carrierId >= 0 ? OffsetForPlayer(carrierId) : new Point(0, 0);
 
-        double targetX = cell.X + (cell.Width / 2) - (PawnSize / 2) + ownerOffset.X;
-        double targetY = cell.Y + (cell.Height / 2) - (PawnSize / 2) + ownerOffset.Y - 22;
+        double targetX = cell.X + (cell.Width / 2) - (PawnSize / 2) + offset.X;
+        double targetY = cell.Y + (cell.Height / 2) - (PawnSize / 2) + offset.Y - 22;
 
         if (!animate)
         {
@@ -410,16 +520,18 @@ public partial class GamePage : ContentPage
             return;
         }
 
-        _ = Task.Run(async () =>
+        _ = AnimateWaddlesAsync(targetX, targetY);
+    }
+
+    private async System.Threading.Tasks.Task AnimateWaddlesAsync(double targetX, double targetY)
+    {
+        try
         {
-            try
-            {
-                await _waddles.TranslateTo(targetX, targetY, 420, Easing.CubicInOut);
-                await _waddles.ScaleTo(1.2, 120, Easing.CubicOut);
-                await _waddles.ScaleTo(1.0, 140, Easing.CubicIn);
-            }
-            catch { /* ignore */ }
-        });
+            await _waddles.TranslateTo(targetX, targetY, 420, Easing.CubicInOut);
+            await _waddles.ScaleTo(1.2, 120, Easing.CubicOut);
+            await _waddles.ScaleTo(1.0, 140, Easing.CubicIn);
+        }
+        catch { }
     }
 
     private async void TryPulseCurrentTurn(int currentTurnId)
@@ -431,12 +543,12 @@ public partial class GamePage : ContentPage
             await pawn.ScaleTo(1.25, 140, Easing.CubicOut);
             await pawn.ScaleTo(1.0, 160, Easing.CubicIn);
         }
-        catch { /* ignore */ }
+        catch { }
     }
 
     private void SetDiceFace(int value)
     {
-        DiceFace.Text = value.ToString();
+        DiceFace.Text = value <= 0 ? "?" : value.ToString();
         DiceBox.Rotation = 0;
     }
 
@@ -444,6 +556,7 @@ public partial class GamePage : ContentPage
     {
         StopDiceAnimation();
         _diceAnimCts = new CancellationTokenSource();
+        var cts = _diceAnimCts;
 
         DiceFace.Text = "…";
         DiceBox.Rotation = 0;
@@ -452,14 +565,14 @@ public partial class GamePage : ContentPage
         {
             try
             {
-                while (!_diceAnimCts.IsCancellationRequested)
+                while (cts != null && !cts.IsCancellationRequested)
                 {
                     await MainThread.InvokeOnMainThreadAsync(() => DiceBox.RotateTo(DiceBox.Rotation + 360, 260, Easing.Linear));
                     await MainThread.InvokeOnMainThreadAsync(() => DiceBox.ScaleTo(1.08, 130, Easing.CubicOut));
                     await MainThread.InvokeOnMainThreadAsync(() => DiceBox.ScaleTo(1.0, 130, Easing.CubicIn));
                 }
             }
-            catch { /* ignore */ }
+            catch { }
         });
     }
 
@@ -475,15 +588,6 @@ public partial class GamePage : ContentPage
         return _state.Players.FirstOrDefault(p => p.Id == id)?.Name ?? $"Player#{id}";
     }
 
-    private static string PawnEmoji(int playerId) => playerId switch
-    {
-        0 => "🧢",
-        1 => "🎀",
-        2 => "💼",
-        3 => "🕶️",
-        _ => "👤"
-    };
-
     private static Point OffsetForPlayer(int playerId) => (playerId % 4) switch
     {
         0 => new Point(-12, -10),
@@ -491,4 +595,25 @@ public partial class GamePage : ContentPage
         2 => new Point(-12, 12),
         _ => new Point(12, 12)
     };
+
+    public class PlayerCardVm
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = "";
+        public HeroType Hero { get; set; }
+        public int Position { get; set; }
+        public int HelpTokens { get; set; }
+        public int MischiefTokens { get; set; }
+        public bool HasWaddles { get; set; }
+        public bool IsTurn { get; set; }
+        public bool SkipNextTurn { get; set; }
+        public bool IsMe { get; set; }
+
+        public string HeroEmoji => HeroInfo.Emoji(Hero);
+        public string NameLine => IsMe ? $"{Name} (ты)" : Name;
+        public string PosChip => $"#{Position}";
+        public string TokensChip => $"✨{HelpTokens} • 😈{MischiefTokens}";
+        public bool SkipChipVisible => SkipNextTurn;
+        public string TurnChip => IsTurn ? "➡️" : "";
+    }
 }

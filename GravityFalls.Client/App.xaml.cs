@@ -1,6 +1,4 @@
-﻿using GravityFalls.Client.Pages;
-
-namespace GravityFalls.Client;
+﻿namespace GravityFalls.Client;
 
 public partial class App : Application
 {

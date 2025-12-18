@@ -7,64 +7,86 @@ namespace GravityFalls.Server.Core
 {
     public class GameServer
     {
-        private TcpListener _listener;
-        private List<ClientSession> _clients = new();
-        public GameLoopService GameLoop { get; private set; }
+        private readonly TcpListener _listener;
+        private readonly List<ClientSession> _clients = new();
+        public GameLoopService GameLoop { get; }
 
-        public GameServer()
+        public GameServer(int port)
         {
+            _listener = new TcpListener(IPAddress.Any, port);
             GameLoop = new GameLoopService(this);
         }
 
-        public async Task StartAsync(int port)
+        public async Task StartAsync(CancellationToken ct = default)
         {
-            _listener = new TcpListener(IPAddress.Any, port);
             _listener.Start();
-            Console.WriteLine($"[Server] Listening on port {port}...");
+            Console.WriteLine($"[Server] Listening...");
 
-            while (true)
+            while (!ct.IsCancellationRequested)
             {
-                var tcpClient = await _listener.AcceptTcpClientAsync();
+                var tcpClient = await _listener.AcceptTcpClientAsync(ct);
 
                 if (_clients.Count >= 4 || GameLoop.IsGameStarted)
                 {
-                    Console.WriteLine("Connection rejected (Full or Started)");
-                    tcpClient.Close();
+                    Console.WriteLine("Connection rejected (full or game started)");
+                    try { tcpClient.Close(); } catch { }
                     continue;
                 }
 
                 var session = new ClientSession(tcpClient, this, _clients.Count);
                 _clients.Add(session);
-                _ = Task.Run(session.ProcessLoop);
+                BroadcastLobbySnapshot();
+                _ = Task.Run(session.ProcessLoop, ct);
             }
         }
 
         public void Broadcast(byte[] packet)
         {
-            foreach (var c in _clients.Where(x => x.IsConnected)) c.Send(packet);
+            foreach (var c in _clients.Where(x => x.IsConnected))
+                c.Send(packet);
         }
+
+        public void SendTo(int playerId, byte[] packet)
+        {
+            var c = _clients.FirstOrDefault(x => x.Id == playerId);
+            c?.Send(packet);
+        }
+
+        public IReadOnlyList<ClientSession> GetClientsSnapshot() => _clients.ToList();
 
         public void BroadcastLobbySnapshot()
         {
             var snapshot = new LobbyStateDto { RoomCode = "DP-P9CR" };
+
             for (int i = 0; i < 4; i++)
             {
-                if (i < _clients.Count)
+                var c = _clients.FirstOrDefault(x => x.Id == i);
+                if (c != null)
                 {
-                    var c = _clients[i];
                     snapshot.Slots.Add(new LobbySlotDto
                     {
                         SlotIndex = i,
-                        DisplayText = c.Nickname,
+                        PlayerId = c.Id,
+                        Nickname = c.Nickname,
+                        Hero = c.Hero,
                         IsReady = c.IsReady,
                         IsEmpty = false
                     });
                 }
                 else
                 {
-                    snapshot.Slots.Add(new LobbySlotDto { SlotIndex = i, DisplayText = "Empty", IsEmpty = true });
+                    snapshot.Slots.Add(new LobbySlotDto
+                    {
+                        SlotIndex = i,
+                        PlayerId = -1,
+                        Nickname = "",
+                        Hero = HeroType.Dipper,
+                        IsReady = false,
+                        IsEmpty = true
+                    });
                 }
             }
+
             Broadcast(Packet.Serialize(OpCode.LobbyUpdate, snapshot));
         }
 
@@ -72,7 +94,7 @@ namespace GravityFalls.Server.Core
         {
             if (_clients.Count == 4 && _clients.All(c => c.IsReady))
             {
-                Console.WriteLine("All Ready! Starting Game...");
+                Console.WriteLine("All ready -> start game");
                 Broadcast(Packet.Serialize(OpCode.StartGame, new object()));
                 GameLoop.StartGame(_clients);
             }

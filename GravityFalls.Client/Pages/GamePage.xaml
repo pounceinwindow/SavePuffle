@@ -13,6 +13,8 @@
             <Color x:Key="Line">#B8935E</Color>
             <Color x:Key="Accent">#C85B23</Color>
             <Color x:Key="Muted">#7A5E3C</Color>
+            <Color x:Key="Good">#2E7D32</Color>
+            <Color x:Key="Bad">#B71C1C</Color>
 
             <LinearGradientBrush x:Key="ParchmentBrush" EndPoint="0,1">
                 <GradientStop Color="{StaticResource Parchment1}" Offset="0" />
@@ -45,6 +47,14 @@
                 <Setter Property="FontSize" Value="18" />
             </Style>
 
+            <Style TargetType="Button" x:Key="SecondaryButton">
+                <Setter Property="BackgroundColor" Value="#E8C98A" />
+                <Setter Property="TextColor" Value="{StaticResource Ink}" />
+                <Setter Property="CornerRadius" Value="16" />
+                <Setter Property="HeightRequest" Value="46" />
+                <Setter Property="FontAttributes" Value="Bold" />
+            </Style>
+
             <Style TargetType="Button" x:Key="ChipButton">
                 <Setter Property="BackgroundColor" Value="#E8C98A" />
                 <Setter Property="TextColor" Value="{StaticResource Ink}" />
@@ -73,14 +83,14 @@
                         <Label x:Name="MeLabel" Text="Вы: ..." Style="{StaticResource SmallMuted}" />
                     </VerticalStackLayout>
 
-                    <Button x:Name="LeaveButton" Grid.Column="1" Text="Выйти" Style="{StaticResource ChipButton}" />
+                    <Button x:Name="LeaveButton" StyleClass="chipBtn" Grid.Column="1" Text="Выйти" Style="{StaticResource ChipButton}" />
 
                     <Label x:Name="TurnLabel" Grid.Row="1" Grid.ColumnSpan="2" Text="Ожидание..." TextColor="{StaticResource Ink}" FontAttributes="Bold" />
                 </Grid>
             </Border>
 
             <!-- Body -->
-            <Grid Grid.Row="1" ColumnDefinitions="*,12,320" RowDefinitions="*">
+            <Grid Grid.Row="1" ColumnDefinitions="*,12,360" RowDefinitions="*">
 
                 <!-- Board -->
                 <Border Grid.Column="0" Stroke="{StaticResource Line}" StrokeThickness="3" StrokeShape="RoundRectangle 18" Background="{StaticResource ParchmentBrush}">
@@ -89,11 +99,15 @@
                     </Border.Shadow>
 
                     <Grid Padding="12" RowDefinitions="Auto,*" RowSpacing="10">
-                        <Label Text="Поле (0 → 30)" Style="{StaticResource H2}" />
+                        <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+                            <Label Text="Поле" Style="{StaticResource H2}" />
+                            <Border Grid.Column="1" Stroke="{StaticResource Line}" StrokeThickness="2" StrokeShape="RoundRectangle 14" BackgroundColor="#F9EFD6" Padding="10,6">
+                                <Label x:Name="WaddlesInfo" Text="🐷 ещё не найден" Style="{StaticResource SmallMuted}" />
+                            </Border>
+                        </Grid>
 
                         <ScrollView Grid.Row="1" Orientation="Both">
                             <Grid>
-                                <!-- Cells + pawns are built in code-behind -->
                                 <AbsoluteLayout x:Name="BoardAbs" />
                             </Grid>
                         </ScrollView>
@@ -106,22 +120,46 @@
                         <Shadow Opacity="0.35" Radius="16" Offset="0,6" />
                     </Border.Shadow>
 
-                    <VerticalStackLayout Padding="14" Spacing="12">
+                    <Grid Padding="14" RowDefinitions="Auto,Auto,Auto,*" RowSpacing="12">
                         <Label Text="Игроки" Style="{StaticResource H2}" />
 
-                        <CollectionView x:Name="PlayersView" HeightRequest="240">
+                        <CollectionView x:Name="PlayersView" Grid.Row="1" HeightRequest="220">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
                                     <Border Stroke="{StaticResource Line}" StrokeThickness="2" StrokeShape="RoundRectangle 14" BackgroundColor="#F9EFD6" Padding="10" Margin="0,0,0,6">
-                                        <Label Text="{Binding .}" TextColor="{StaticResource Ink}" FontAttributes="Bold" />
+                                        <Grid ColumnDefinitions="Auto,10,*,Auto" RowDefinitions="Auto,Auto" RowSpacing="4">
+                                            <Border Grid.RowSpan="2" Stroke="{StaticResource Line}" StrokeThickness="2" StrokeShape="RoundRectangle 999" BackgroundColor="#FFFFFF" WidthRequest="42" HeightRequest="42">
+                                                <Label Text="{Binding HeroEmoji}" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center" />
+                                            </Border>
+
+                                            <Label Grid.Column="2" Grid.Row="0" Text="{Binding NameLine}" TextColor="{StaticResource Ink}" FontAttributes="Bold" LineBreakMode="TailTruncation" />
+
+                                            <HorizontalStackLayout Grid.Column="2" Grid.Row="1" Spacing="6">
+                                                <Border Stroke="{StaticResource Line}" StrokeThickness="1" StrokeShape="RoundRectangle 999" BackgroundColor="#E8C98A" Padding="8,2">
+                                                    <Label Text="{Binding PosChip}" Style="{StaticResource SmallMuted}" />
+                                                </Border>
+                                                <Border Stroke="{StaticResource Line}" StrokeThickness="1" StrokeShape="RoundRectangle 999" BackgroundColor="#FFFFFF" Padding="8,2">
+                                                    <Label Text="{Binding TokensChip}" Style="{StaticResource SmallMuted}" />
+                                                </Border>
+                                                <Border Stroke="{StaticResource Line}" StrokeThickness="1" StrokeShape="RoundRectangle 999" BackgroundColor="#FFFFFF" Padding="8,2" IsVisible="{Binding HasWaddles}">
+                                                    <Label Text="🐷" Style="{StaticResource SmallMuted}" />
+                                                </Border>
+                                                <Border Stroke="{StaticResource Line}" StrokeThickness="1" StrokeShape="RoundRectangle 999" BackgroundColor="#FFFFFF" Padding="8,2" IsVisible="{Binding SkipChipVisible}">
+                                                    <Label Text="💤" Style="{StaticResource SmallMuted}" />
+                                                </Border>
+                                            </HorizontalStackLayout>
+
+                                            <Label Grid.Column="3" Grid.RowSpan="2" Text="{Binding TurnChip}" TextColor="{StaticResource Ink}" FontAttributes="Bold" VerticalOptions="Center" />
+                                        </Grid>
                                     </Border>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
                         </CollectionView>
 
-                        <Border Stroke="{StaticResource Line}" StrokeThickness="2" StrokeShape="RoundRectangle 16" BackgroundColor="#F9EFD6" Padding="12">
+                        <!-- Actions -->
+                        <Border Grid.Row="2" Stroke="{StaticResource Line}" StrokeThickness="2" StrokeShape="RoundRectangle 16" BackgroundColor="#F9EFD6" Padding="12">
                             <VerticalStackLayout Spacing="8">
-                                <Label Text="Кубик" Style="{StaticResource H2}" />
+                                <Label Text="Действия" Style="{StaticResource H2}" />
 
                                 <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" VerticalOptions="Center">
                                     <Border x:Name="DiceBox" Stroke="{StaticResource Line}" StrokeThickness="2" StrokeShape="RoundRectangle 16" BackgroundColor="#FFFFFF" WidthRequest="74" HeightRequest="74">
@@ -129,19 +167,30 @@
                                     </Border>
 
                                     <VerticalStackLayout Grid.Column="1" Spacing="6">
-                                        <Button x:Name="RollButton" Text="БРОСИТЬ" Style="{StaticResource PrimaryButton}" />
-                                        <Label x:Name="HintLabel" Text="Ходит только текущий игрок." Style="{StaticResource SmallMuted}" />
+                                        <Button x:Name="RollButton" StyleClass="primaryBtn" Text="БРОСИТЬ" Style="{StaticResource PrimaryButton}" />
+                                        <Button x:Name="ExchangeButton" StyleClass="secondaryBtn" Text="ОБМЕН 😈→✨" Style="{StaticResource SecondaryButton}" />
                                     </VerticalStackLayout>
                                 </Grid>
 
-                                <Label x:Name="LogLabel" Text="" Style="{StaticResource SmallMuted}" />
+                                <Label x:Name="HintLabel" StyleClass="mutedLabel" Text="Ходит только текущий игрок." Style="{StaticResource SmallMuted}" />
                             </VerticalStackLayout>
                         </Border>
 
-                        <Border Stroke="{StaticResource Line}" StrokeThickness="2" StrokeShape="RoundRectangle 16" BackgroundColor="#E8C98A" Padding="12">
-                            <Label Text="🐷 Пухля: чтобы победить — дойти до 30 и держать Пухлю. С Пухлей за ход максимум 3 клетки." TextColor="{StaticResource Ink}" FontAttributes="Bold" />
+                        <!-- Event log -->
+                        <Border Grid.Row="3" Stroke="{StaticResource Line}" StrokeThickness="2" StrokeShape="RoundRectangle 16" BackgroundColor="#E8C98A" Padding="12">
+                            <Grid RowDefinitions="Auto,*" RowSpacing="8">
+                                <Label Text="События" TextColor="{StaticResource Ink}" FontAttributes="Bold" />
+                                <CollectionView x:Name="EventsView" Grid.Row="1" HeightRequest="220">
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Label Text="{Binding .}" TextColor="{StaticResource Ink}" FontSize="12" />
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
+                            </Grid>
                         </Border>
-                    </VerticalStackLayout>
+
+                    </Grid>
                 </Border>
 
             </Grid>

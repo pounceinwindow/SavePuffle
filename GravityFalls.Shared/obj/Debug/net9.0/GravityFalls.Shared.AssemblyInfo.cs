@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GravityFalls.Shared")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a9720fd6b2b49eaef9d3c0e198df511f881bcc9c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ba0bb04a92ac8e22db07c4efca6d1a6c70ec7da8")]
 [assembly: System.Reflection.AssemblyProductAttribute("GravityFalls.Shared")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GravityFalls.Shared")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

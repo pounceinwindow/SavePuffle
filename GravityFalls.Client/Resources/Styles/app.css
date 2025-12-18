@@ -1,0 +1,30 @@
+/*
+  MAUI CSS styles.
+  Works together with XAML resources; used mainly for quick theming.
+*/
+
+.primaryBtn {
+  background-color: #C85B23;
+  color: white;
+  corner-radius: 16;
+  font-attributes: bold;
+}
+
+.secondaryBtn {
+  background-color: #E8C98A;
+  color: #2B1B12;
+  corner-radius: 16;
+  font-attributes: bold;
+}
+
+.chipBtn {
+  background-color: #E8C98A;
+  color: #2B1B12;
+  corner-radius: 14;
+  font-attributes: bold;
+}
+
+.mutedLabel {
+  color: #7A5E3C;
+  font-size: 12;
+}

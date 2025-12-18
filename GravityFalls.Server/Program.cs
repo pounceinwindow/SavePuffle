@@ -1,8 +1,9 @@
-﻿using GravityFalls.Server.Core;
+using GravityFalls.Server.Core;
 
 Console.Title = "Gravity Falls Server";
 Console.WriteLine("Starting Server...");
 
-var server = new GameServer();
+const int port = 8888;
+var server = new GameServer(port);
 
-await server.StartAsync(8888);
+await server.StartAsync();

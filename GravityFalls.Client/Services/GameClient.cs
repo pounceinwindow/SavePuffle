@@ -32,6 +32,7 @@ public sealed class GameClient : IDisposable
     public event Action? GameStarted;
     public event Action<GameStateDto>? GameStateUpdated;
     public event Action<DiceResultDto>? DiceResultReceived;
+    public event Action<GameEventDto>? GameEventReceived;
     public event Action<GameOverDto>? GameOver;
     public event Action<string>? Error;
     public event Action? Disconnected;
@@ -56,7 +57,9 @@ public sealed class GameClient : IDisposable
     }
 
     public Task ToggleReadyAsync(CancellationToken ct = default) => SendAsync(OpCode.ToggleReady, new { }, ct);
+    public Task SelectHeroAsync(HeroType hero, CancellationToken ct = default) => SendAsync(OpCode.SelectHero, new SelectHeroDto { Hero = hero }, ct);
     public Task RollDiceAsync(CancellationToken ct = default) => SendAsync(OpCode.RollDice, new { }, ct);
+    public Task ExchangeAsync(CancellationToken ct = default) => SendAsync(OpCode.Exchange, new ExchangeDto(), ct);
 
     public void Disconnect()
     {
@@ -68,6 +71,11 @@ public sealed class GameClient : IDisposable
         _receiveCts = null;
         _stream = null;
         _client = null;
+
+        LastLobbyState = null;
+        LastGameState = null;
+        LastDiceResult = null;
+        LastGameOver = null;
     }
 
     public void Dispose()
@@ -169,6 +177,13 @@ public sealed class GameClient : IDisposable
                         LastDiceResult = roll;
                         DiceResultReceived?.Invoke(roll);
                     }
+                    break;
+                }
+            case OpCode.GameEvent:
+                {
+                    var ev = JsonSerializer.Deserialize<GameEventDto>(json);
+                    if (ev != null)
+                        GameEventReceived?.Invoke(ev);
                     break;
                 }
             case OpCode.GameOver:
