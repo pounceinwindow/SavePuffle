@@ -17,6 +17,7 @@ namespace GravityFalls.Shared
         public string DisplayText { get; set; } = "";
         public bool IsReady { get; set; }
         public bool IsEmpty { get; set; }
+        public HeroType Hero { get; set; }
     }
 
     public class GameStateDto
@@ -32,6 +33,7 @@ namespace GravityFalls.Shared
         public string Name { get; set; } = "";
         public int Position { get; set; }
         public bool HasWaddles { get; set; }
+        public HeroType Hero { get; set; }
     }
 
     public class DiceResultDto
@@ -41,4 +43,9 @@ namespace GravityFalls.Shared
     }
 
     public class GameOverDto { public string WinnerName { get; set; } = ""; }
+
+    public class HeroSelectionDto
+    {
+        public HeroType Hero { get; set; }
+    }
 }

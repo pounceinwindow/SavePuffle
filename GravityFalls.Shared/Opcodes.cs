@@ -6,6 +6,7 @@ namespace GravityFalls.Shared
         LobbyUpdate = 2,
         ToggleReady = 3,
         StartGame = 4,
+        SetHero = 5,
 
         RollDice = 10,
         DiceResult = 11,
@@ -25,6 +26,8 @@ namespace GravityFalls.Shared
         ArrowRed,
         ArrowBlue,
         Mischief,
-        Help
+        Help,
+        Treasure,
+        Trap
     }
 }

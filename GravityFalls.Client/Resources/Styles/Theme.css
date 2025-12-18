@@ -1,0 +1,38 @@
+.parchment-card {
+    background-color: #F6E7C6;
+    border-color: #B8935E;
+    border-width: 2;
+    border-radius: 16;
+}
+
+.parchment-chip {
+    background-color: #E8C98A;
+    border-color: #B8935E;
+    border-width: 2;
+    border-radius: 12;
+}
+
+.hero-card {
+    background-color: #F9EFD6;
+    border-color: #B8935E;
+    border-width: 2;
+    border-radius: 14;
+}
+
+.accent-button {
+    background-color: #C85B23;
+    color: white;
+    border-radius: 16;
+    font-size: 18;
+    font-weight: bold;
+}
+
+.muted-text {
+    color: #7A5E3C;
+}
+
+.legend-chip {
+    background-color: #FFF0D9;
+    border-radius: 10;
+    padding: 6;
+}
