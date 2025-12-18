@@ -25,6 +25,9 @@ namespace GravityFalls.Shared
         ArrowRed,
         ArrowBlue,
         Mischief,
-        Help
+        Help,
+        Honey,
+        Portal,
+        Trap
     }
 }

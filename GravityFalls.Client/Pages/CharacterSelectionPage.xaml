@@ -6,61 +6,7 @@
     xmlns:sys="clr-namespace:System;assembly=System.Runtime"
     Title="Lobby">
 
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <Color x:Key="Ink">#2B1B12</Color>
-            <Color x:Key="Parchment1">#F6E7C6</Color>
-            <Color x:Key="Parchment2">#EBD5A6</Color>
-            <Color x:Key="Line">#B8935E</Color>
-
-            <Color x:Key="Accent">#C85B23</Color>
-            <Color x:Key="Muted">#7A5E3C</Color>
-            <Color x:Key="Good">#2E7D32</Color>
-            <Color x:Key="Warn">#B71C1C</Color>
-
-            <LinearGradientBrush x:Key="ParchmentBrush" EndPoint="0,1">
-                <GradientStop Color="{StaticResource Parchment1}" Offset="0" />
-                <GradientStop Color="{StaticResource Parchment2}" Offset="1" />
-            </LinearGradientBrush>
-
-            <Style TargetType="Label" x:Key="H1">
-                <Setter Property="TextColor" Value="{StaticResource Ink}" />
-                <Setter Property="FontSize" Value="26" />
-                <Setter Property="FontAttributes" Value="Bold" />
-            </Style>
-
-            <Style TargetType="Label" x:Key="H2">
-                <Setter Property="TextColor" Value="{StaticResource Ink}" />
-                <Setter Property="FontSize" Value="18" />
-                <Setter Property="FontAttributes" Value="Bold" />
-            </Style>
-
-            <Style TargetType="Label" x:Key="SmallMuted">
-                <Setter Property="TextColor" Value="{StaticResource Muted}" />
-                <Setter Property="FontSize" Value="12" />
-            </Style>
-
-            <Style TargetType="Button" x:Key="PrimaryButton">
-                <Setter Property="BackgroundColor" Value="{StaticResource Accent}" />
-                <Setter Property="TextColor" Value="White" />
-                <Setter Property="CornerRadius" Value="16" />
-                <Setter Property="HeightRequest" Value="52" />
-                <Setter Property="FontAttributes" Value="Bold" />
-                <Setter Property="FontSize" Value="18" />
-            </Style>
-
-            <Style TargetType="Button" x:Key="ChipButton">
-                <Setter Property="BackgroundColor" Value="#E8C98A" />
-                <Setter Property="TextColor" Value="{StaticResource Ink}" />
-                <Setter Property="CornerRadius" Value="14" />
-                <Setter Property="HeightRequest" Value="40" />
-                <Setter Property="FontAttributes" Value="Bold" />
-                <Setter Property="Padding" Value="14,0" />
-            </Style>
-        </ResourceDictionary>
-    </ContentPage.Resources>
-
-    <Grid>
+    <Grid StyleClass="parchment">
         <!-- Фон -->
         <Image Source="wood_bg.png" Aspect="AspectFill" />
         <BoxView Opacity="0.18" BackgroundColor="Black" />
@@ -70,10 +16,10 @@
                                  HorizontalOptions="Center"
                                  MaximumWidthRequest="900">
 
-                <Border Stroke="{StaticResource Line}"
+                <Border Stroke="#B8935E"
                         StrokeThickness="3"
                         StrokeShape="RoundRectangle 18"
-                        Background="{StaticResource ParchmentBrush}">
+                        Background="#F6E7C6">
                     <Border.Shadow>
                         <Shadow Opacity="0.45" Radius="18" Offset="0,8"/>
                     </Border.Shadow>
@@ -81,25 +27,25 @@
                     <Grid Padding="16" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" RowSpacing="6">
                         <Label Grid.Row="0" Grid.Column="0"
                                Text="ТАИНСТВЕННОЕ ЛОББИ"
-                               Style="{StaticResource H1}" />
+                               StyleClass="h1" />
 
                         <Border Grid.Row="1" Grid.Column="0"
-                                Stroke="{StaticResource Line}"
+                                Stroke="#B8935E"
                                 StrokeThickness="2"
                                 StrokeShape="RoundRectangle 14"
                                 BackgroundColor="#E8C98A"
                                 Padding="12,6">
                             <HorizontalStackLayout Spacing="10">
-                                <Label Text="👥 4 игрока" TextColor="{StaticResource Ink}" FontAttributes="Bold"/>
-                                <Label Text="•" TextColor="{StaticResource Ink}" Opacity="0.6"/>
-                                <Label Text="PC - кооператив" TextColor="{StaticResource Ink}" FontAttributes="Bold"/>
+                                <Label Text="👥 4 игрока" TextColor="#2B1B12" FontAttributes="Bold"/>
+                                <Label Text="•" TextColor="#2B1B12" Opacity="0.6"/>
+                                <Label Text="PC - кооператив" TextColor="#2B1B12" FontAttributes="Bold"/>
                             </HorizontalStackLayout>
                         </Border>
 
                         <Button x:Name="BackButton"
                                 Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"
                                 Text="Назад"
-                                Style="{StaticResource ChipButton}"
+                                StyleClass="chip"
                                 HorizontalOptions="End"
                                 VerticalOptions="Center" />
                     </Grid>
@@ -107,25 +53,25 @@
 
                 <Grid ColumnDefinitions="*,12,Auto" RowDefinitions="Auto">
                     <Border Grid.Column="0"
-                            Stroke="{StaticResource Line}"
+                            Stroke="#B8935E"
                             StrokeThickness="3"
                             StrokeShape="RoundRectangle 18"
-                            Background="{StaticResource ParchmentBrush}">
+                            Background="#F6E7C6">
                         <Border.Shadow>
                             <Shadow Opacity="0.35" Radius="16" Offset="0,6"/>
                         </Border.Shadow>
 
                         <VerticalStackLayout Padding="14" Spacing="8">
-                            <Label Text="Сессия" Style="{StaticResource H2}" />
-                            <Label Text="• TCP + XPacket" TextColor="{StaticResource Ink}" />
-                            <Label Text="• Шифрование после handshake" TextColor="{StaticResource Ink}" />
-                            <Label Text="• Сервер присылает список игроков" TextColor="{StaticResource Ink}" />
-                            <Label Text="Заметка: ищем улики и не сливаемся 🙂" Style="{StaticResource SmallMuted}" />
+                            <Label Text="Сессия" StyleClass="h2" />
+                            <Label Text="• TCP + XPacket" TextColor="#2B1B12" />
+                            <Label Text="• Шифрование после handshake" TextColor="#2B1B12" />
+                            <Label Text="• Сервер присылает список игроков" TextColor="#2B1B12" />
+                            <Label Text="Заметка: ищем улики и не сливаемся 🙂" StyleClass="small-muted" />
                         </VerticalStackLayout>
                     </Border>
 
                     <Border Grid.Column="2"
-                            Stroke="{StaticResource Line}"
+                            Stroke="#B8935E"
                             StrokeThickness="2"
                             StrokeShape="RoundRectangle 14"
                             BackgroundColor="#E8C98A"
@@ -140,10 +86,10 @@
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Border Stroke="{StaticResource Line}"
+                            <Border Stroke="#B8935E"
                                     StrokeThickness="3"
                                     StrokeShape="RoundRectangle 18"
-                                    Background="{StaticResource ParchmentBrush}"
+                                    Background="#F6E7C6"
                                     Margin="0,6,0,0">
                                 <Border.Shadow>
                                     <Shadow Opacity="0.25" Radius="12" Offset="0,5"/>
@@ -156,7 +102,7 @@
 
                                     <!-- индикатор статуса (просто декоративный, пока на строках) -->
                                     <Border Grid.RowSpan="2"
-                                            Stroke="{StaticResource Line}"
+                                            Stroke="#B8935E"
                                             StrokeThickness="2"
                                             StrokeShape="RoundRectangle 999"
                                             BackgroundColor="#F9EFD6"
@@ -166,7 +112,7 @@
                                         <Label Text="?"
                                                FontSize="24"
                                                FontAttributes="Bold"
-                                               TextColor="{StaticResource Ink}"
+                                               TextColor="#2B1B12"
                                                HorizontalOptions="Center"
                                                VerticalOptions="Center"/>
                                     </Border>
@@ -174,23 +120,23 @@
                                     <Label Grid.Column="2"
                                            Grid.Row="0"
                                            Text="{Binding .}"
-                                           TextColor="{StaticResource Ink}"
+                                           TextColor="#2B1B12"
                                            FontAttributes="Bold"
                                            FontSize="16"
                                            LineBreakMode="TailTruncation"/>
 
                                     <HorizontalStackLayout Grid.Column="2" Grid.Row="1" Spacing="8">
                                         <BoxView WidthRequest="10" HeightRequest="10" CornerRadius="5"
-                                                 BackgroundColor="{StaticResource Good}"
+                                                 BackgroundColor="#2E7D32"
                                                  VerticalOptions="Center"/>
                                         <Label Text="Сервер будет обновлять состав/готовность."
-                                               Style="{StaticResource SmallMuted}" />
+                                               StyleClass="small-muted" />
                                     </HorizontalStackLayout>
 
                                     <Button Grid.Column="3"
                                             Grid.RowSpan="2"
                                             Text="…"
-                                            Style="{StaticResource ChipButton}"
+                                            StyleClass="chip"
                                             VerticalOptions="Center"/>
                                 </Grid>
                             </Border>
@@ -199,20 +145,20 @@
                 </CollectionView>
 
                 <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12" Margin="0,10,0,8">
-                    <Border Stroke="{StaticResource Line}"
+                    <Border Stroke="#B8935E"
                             StrokeThickness="2"
                             StrokeShape="RoundRectangle 16"
                             BackgroundColor="#E8C98A"
                             Padding="14,10">
                         <Label Text="Confirm = готовность/старт (сервер решит)."
-                               TextColor="{StaticResource Ink}"
+                               TextColor="#2B1B12"
                                FontAttributes="Bold"/>
                     </Border>
 
                     <Button x:Name="ConfirmButton"
                             Grid.Column="1"
                             Text="START"
-                            Style="{StaticResource PrimaryButton}">
+                            StyleClass="primary">
                         <Button.Shadow>
                             <Shadow Opacity="0.35" Radius="12" Offset="0,6" />
                         </Button.Shadow>

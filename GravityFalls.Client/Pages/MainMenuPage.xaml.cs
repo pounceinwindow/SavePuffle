@@ -1,4 +1,7 @@
-﻿using SavePuffle.Services;
+﻿using GravityFalls.Shared;
+using SavePuffle.Services;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace GravityFalls.Client.Pages;
 
@@ -7,6 +10,11 @@ public partial class MainMenuPage : ContentPage
     public MainMenuPage()
     {
         InitializeComponent();
+
+        HeroPicker.ItemsSource = Enum.GetValues(typeof(HeroType)).Cast<HeroType>().ToList();
+        HeroPicker.SelectedItem = HeroType.Dipper;
+        HeroPicker.SelectedIndexChanged += (_, __) => UpdateHeroHint();
+        UpdateHeroHint();
 
         StartButton.Clicked += StartButtonOnClicked;
         RulesButton.Clicked += async (_, __) =>
@@ -22,6 +30,21 @@ public partial class MainMenuPage : ContentPage
         };
     }
 
+    private void UpdateHeroHint()
+    {
+        HeroType hero = HeroPicker.SelectedItem is HeroType picked ? picked : HeroType.Dipper;
+        string hint = hero switch
+        {
+            HeroType.Dipper => "Диппер: +1 шаг если без Пухли, портал толкает сильнее.",
+            HeroType.Mabel => "Мэйбл: обходит липкие ловушки и смягчает капканы.",
+            HeroType.Stan => "Стэн: штрафы меньше — умеет выкручиваться.",
+            HeroType.Soos => "Сус: снимает дебаффы и чинит технику прямо на поле.",
+            HeroType.Wendy => "Вэнди: держит темп даже после ловушек.",
+            _ => "У каждого героя своя фишка."
+        };
+        HeroHint.Text = hint;
+    }
+
     private async void StartButtonOnClicked(object? sender, EventArgs e)
     {
         string nickname = (NicknameEntry.Text ?? "").Trim();
@@ -31,12 +54,14 @@ public partial class MainMenuPage : ContentPage
             return;
         }
 
+        HeroType hero = HeroPicker.SelectedItem is HeroType picked ? picked : HeroType.Dipper;
+
         (string host, int port) = ParseHostPort((ServerEntry.Text ?? "").Trim());
 
         StartButton.IsEnabled = false;
         try
         {
-            await GameClient.Instance.ConnectAsync(host, port, nickname);
+            await GameClient.Instance.ConnectAsync(host, port, nickname, hero);
             await Shell.Current.GoToAsync(nameof(CharacterSelectionPage));
         }
         catch (Exception ex)

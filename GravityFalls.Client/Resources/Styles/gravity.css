@@ -1,0 +1,74 @@
+:root {
+    --ink: #2B1B12;
+    --parchment: #F6E7C6;
+    --parchment-strong: #EBD5A6;
+    --line: #B8935E;
+    --accent: #C85B23;
+    --muted: #7A5E3C;
+    --badge: #E8C98A;
+}
+
+contentpage.parchment {
+    background-color: transparent;
+}
+
+label.h1 {
+    color: var(--ink);
+    font-size: 26;
+    font-attributes: bold;
+}
+
+label.h2 {
+    color: var(--ink);
+    font-size: 18;
+    font-attributes: bold;
+}
+
+label.small-muted {
+    color: var(--muted);
+    font-size: 12;
+}
+
+button.primary {
+    background-color: var(--accent);
+    color: white;
+    corner-radius: 16;
+    height: 52;
+    font-attributes: bold;
+    font-size: 18;
+}
+
+button.chip {
+    background-color: var(--badge);
+    color: var(--ink);
+    corner-radius: 14;
+    height: 40;
+    font-attributes: bold;
+    padding: 14 0;
+}
+
+border.panel {
+    border-color: var(--line);
+    border-width: 3;
+    corner-radius: 18;
+    background-color: var(--parchment);
+}
+
+border.highlight {
+    border-color: var(--line);
+    border-width: 2;
+    corner-radius: 14;
+    background-color: var(--badge);
+}
+
+border.card {
+    border-color: var(--line);
+    border-width: 2;
+    corner-radius: 16;
+    background-color: #F9EFD6;
+}
+
+label.hero-label {
+    color: var(--ink);
+    font-attributes: bold;
+}

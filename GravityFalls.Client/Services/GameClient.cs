@@ -21,6 +21,7 @@ public sealed class GameClient : IDisposable
 
     /// <summary>Nickname that was used on ConnectAsync.</summary>
     public string Nickname { get; private set; } = "";
+    public HeroType Hero { get; private set; } = HeroType.Dipper;
 
     // Cache last known states so UI can attach late (after navigation)
     public LobbyStateDto? LastLobbyState { get; private set; }
@@ -38,11 +39,12 @@ public sealed class GameClient : IDisposable
 
     private GameClient() { }
 
-    public async Task ConnectAsync(string host, int port, string nickname, CancellationToken ct = default)
+    public async Task ConnectAsync(string host, int port, string nickname, HeroType hero, CancellationToken ct = default)
     {
         Disconnect();
 
         Nickname = nickname;
+        Hero = hero;
 
         _client = new TcpClient();
         await _client.ConnectAsync(host, port, ct);
@@ -52,7 +54,7 @@ public sealed class GameClient : IDisposable
         _ = Task.Run(() => ReceiveLoopAsync(_receiveCts.Token));
 
         // Immediately send Login with Nickname (email removed).
-        await SendAsync(OpCode.Login, new LoginDto { Nickname = nickname }, ct);
+        await SendAsync(OpCode.Login, new LoginDto { Nickname = nickname, Hero = hero }, ct);
     }
 
     public Task ToggleReadyAsync(CancellationToken ct = default) => SendAsync(OpCode.ToggleReady, new { }, ct);

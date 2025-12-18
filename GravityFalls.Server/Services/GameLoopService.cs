@@ -22,6 +22,12 @@ namespace GravityFalls.Server.Services
             IsGameStarted = true;
             _players = players;
             _currentTurnIndex = 0;
+            foreach (var p in _players)
+            {
+                p.Position = 0;
+                p.HasWaddles = false;
+                p.NextStepLimit = null;
+            }
             BroadcastState();
         }
 
@@ -65,11 +71,32 @@ namespace GravityFalls.Server.Services
                     Id = p.Id,
                     Name = p.Nickname,
                     Position = p.Position,
-                    HasWaddles = p.HasWaddles
+                    HasWaddles = p.HasWaddles,
+                    Hero = p.Hero,
+                    Status = BuildStatus(p)
                 });
             }
 
             _server.Broadcast(Packet.Serialize(OpCode.GameState, state));
+        }
+
+        private string BuildStatus(ClientSession player)
+        {
+            var parts = new List<string>();
+            parts.Add(player.Hero switch
+            {
+                HeroType.Dipper => "📜 +1 шаг без Пухли",
+                HeroType.Mabel => "🌈 Чарует ловушки",
+                HeroType.Stan => "🪙 Меньше штрафов",
+                HeroType.Soos => "🛠️ Снимает дебаффы",
+                HeroType.Wendy => "🏹 Держит темп",
+                _ => ""
+            });
+
+            if (player.HasWaddles) parts.Add("🐷 Пухля рядом");
+            if (player.NextStepLimit.HasValue) parts.Add($"⏳ лимит {player.NextStepLimit}");
+
+            return string.Join(" • ", parts.Where(p => !string.IsNullOrWhiteSpace(p)));
         }
     }
 }

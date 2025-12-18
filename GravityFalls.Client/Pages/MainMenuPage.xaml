@@ -5,44 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="Main Menu">
 
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <Color x:Key="Ink">#3A2A1B</Color>
-            <Color x:Key="Parchment1">#F6E7C6</Color>
-            <Color x:Key="Parchment2">#EBD5A6</Color>
-            <Color x:Key="Line">#B8935E</Color>
-            <Color x:Key="Accent">#C85B23</Color>
-            <Color x:Key="AccentDark">#8F3E18</Color>
-
-            <LinearGradientBrush x:Key="ParchmentBrush" EndPoint="0,1">
-                <GradientStop Color="{StaticResource Parchment1}" Offset="0" />
-                <GradientStop Color="{StaticResource Parchment2}" Offset="1" />
-            </LinearGradientBrush>
-
-            <Style TargetType="Label" x:Key="FieldLabel">
-                <Setter Property="TextColor" Value="{StaticResource Ink}" />
-                <Setter Property="FontSize" Value="16" />
-                <Setter Property="FontAttributes" Value="Bold" />
-            </Style>
-
-            <Style TargetType="Entry" x:Key="FieldEntry">
-                <Setter Property="TextColor" Value="{StaticResource Ink}" />
-                <Setter Property="PlaceholderColor" Value="#7A5E3C" />
-                <Setter Property="BackgroundColor" Value="Transparent" />
-                <Setter Property="FontSize" Value="16" />
-                <Setter Property="Margin" Value="12,10" />
-            </Style>
-
-            <Style TargetType="Button" x:Key="LinkButton">
-                <Setter Property="BackgroundColor" Value="Transparent" />
-                <Setter Property="TextColor" Value="{StaticResource Ink}" />
-                <Setter Property="FontAttributes" Value="Bold" />
-                <Setter Property="Padding" Value="6,4" />
-            </Style>
-        </ResourceDictionary>
-    </ContentPage.Resources>
-
-    <Grid>
+    <Grid StyleClass="parchment">
         <Image Source="wood_bg.png" Aspect="AspectFill" />
 
         <BoxView Opacity="0.10" BackgroundColor="Black" />
@@ -58,45 +21,57 @@
                        HorizontalOptions="Center"
                        Margin="0,14,0,4" />
 
-                <Border Stroke="{StaticResource Line}"
+                <Border Stroke="#B8935E"
                         StrokeThickness="3"
                         StrokeShape="RoundRectangle 18"
-                        Background="{StaticResource ParchmentBrush}">
+                        Background="#F6E7C6">
                     <Border.Shadow>
                         <Shadow Opacity="0.45" Radius="18" Offset="0,8"/>
                     </Border.Shadow>
 
                     <VerticalStackLayout  Padding="36" Spacing="16" WidthRequest="400">
 
-                        <Label Text="Nickname" Style="{StaticResource FieldLabel}" />
+                        <Label Text="Nickname" StyleClass="h2" />
 
-                        <Border Stroke="{StaticResource Line}"
+                        <Border Stroke="#B8935E"
                                 StrokeThickness="2"
                                 StrokeShape="RoundRectangle 12"
                                 BackgroundColor="#F9EFD6">
                             <Entry x:Name="NicknameEntry"
-                                   Style="{StaticResource FieldEntry}"
+                                   TextColor="#2B1B12" PlaceholderColor="#7A5E3C" FontSize="16" Margin="12,10"
                                    Placeholder="Dipper" />
                         </Border>
 
-                        <Label Text="Server" Style="{StaticResource FieldLabel}" />
+                        <Label Text="Server" StyleClass="h2" />
 
-                        <Border Stroke="{StaticResource Line}"
-                                StrokeThickness="2"
-                                StrokeShape="RoundRectangle 12"
-                                BackgroundColor="#F9EFD6">
-                            <Entry x:Name="ServerEntry"
-                                   Style="{StaticResource FieldEntry}"
-                                   Placeholder="127.0.0.1:8888" />
-                        </Border>
+                          <Border Stroke="#B8935E"
+                                  StrokeThickness="2"
+                                  StrokeShape="RoundRectangle 12"
+                                  BackgroundColor="#F9EFD6">
+                              <Entry x:Name="ServerEntry"
+                                     TextColor="#2B1B12" PlaceholderColor="#7A5E3C" FontSize="16" Margin="12,10"
+                                     Placeholder="127.0.0.1:8888" />
+                          </Border>
 
-                        <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                          <Label Text="Герой" StyleClass="h2" />
+                          <Border Stroke="#B8935E" StrokeThickness="2" StrokeShape="RoundRectangle 12" BackgroundColor="#F9EFD6">
+                              <Picker x:Name="HeroPicker"
+                                      Margin="12,6"
+                                      Title="Выбери персонажа"
+                                      TitleColor="#7A5E3C"
+                                      TextColor="#2B1B12" />
+                          </Border>
+                          <Label x:Name="HeroHint"
+                                 Text="У каждого героя свои бонусы: выбери по вкусу."
+                                 StyleClass="small-muted" />
+
+                          <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
                             
                         </HorizontalStackLayout>
                         
                         <Button x:Name="RulesButton"
                                 Text="Rules"
-                                Style="{StaticResource LinkButton}"
+                                StyleClass="chip"
                                 HorizontalOptions="Center"/>
                         
                         <Button x:Name="StartButton"
@@ -106,7 +81,7 @@
                                 HeightRequest="52"
                                 CornerRadius="16"
                                 TextColor="White"
-                                BackgroundColor="{StaticResource Accent}">
+                                BackgroundColor="#C85B23">
                             <Button.Shadow>
                                 <Shadow Opacity="0.35" Radius="12" Offset="0,6" />
                             </Button.Shadow>

@@ -13,6 +13,8 @@ namespace GravityFalls.Server.Core
 
         public int Position { get; set; } = 0;
         public bool HasWaddles { get; set; } = false;
+        public HeroType Hero { get; set; } = HeroType.Dipper;
+        public int? NextStepLimit { get; set; }
 
         private TcpClient _client;
         private NetworkStream _stream;
@@ -79,6 +81,7 @@ namespace GravityFalls.Server.Core
                 case OpCode.Login:
                     var login = JsonSerializer.Deserialize<LoginDto>(json);
                     Nickname = string.IsNullOrWhiteSpace(login?.Nickname) ? "Unknown" : login!.Nickname;
+                    Hero = login?.Hero ?? HeroType.Dipper;
                     _server.BroadcastLobbySnapshot();
                     break;
                 case OpCode.ToggleReady:

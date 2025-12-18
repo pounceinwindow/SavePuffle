@@ -55,7 +55,7 @@ namespace GravityFalls.Server.Core
                     snapshot.Slots.Add(new LobbySlotDto
                     {
                         SlotIndex = i,
-                        DisplayText = c.Nickname,
+                        DisplayText = $"{c.Nickname} ({c.Hero})",
                         IsReady = c.IsReady,
                         IsEmpty = false
                     });

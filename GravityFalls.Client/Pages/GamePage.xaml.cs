@@ -126,9 +126,15 @@ public partial class GamePage : ContentPage
 
         string icon = pos switch
         {
+            3 => "✨+1",
             5 => "🔵➡️+2",
+            8 => "🍯⏳",
             12 => "🔴⬅️-2",
+            16 => "🌀 +3",
             20 => "😈",
+            23 => "✨+1",
+            26 => "⚠️",
+            28 => "🍯⏳",
             30 => "🏁",
             _ => ""
         };
@@ -312,13 +318,14 @@ public partial class GamePage : ContentPage
         {
             string turn = p.Id == state.CurrentTurnPlayerId ? "➡️" : "  ";
             string waddles = p.HasWaddles ? " 🐷" : "";
-            _playerLines.Add($"{turn} {p.Name} • клетка {p.Position}{waddles}");
+            string status = string.IsNullOrWhiteSpace(p.Status) ? "" : $" • {p.Status}";
+            _playerLines.Add($"{turn} {p.Name} ({p.Hero}) • клетка {p.Position}{waddles}{status}");
         }
 
         // Header
         TurnLabel.Text = $"Ходит: {NameById(state.CurrentTurnPlayerId)}";
         MeLabel.Text = _myId >= 0
-            ? $"Вы: {GameClient.Instance.Nickname} (id={_myId})"
+            ? $"Вы: {GameClient.Instance.Nickname} ({GameClient.Instance.Hero})"
             : $"Вы: {GameClient.Instance.Nickname}";
 
         // Roll button availability

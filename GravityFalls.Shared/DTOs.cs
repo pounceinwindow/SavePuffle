@@ -3,6 +3,7 @@ namespace GravityFalls.Shared
     public class LoginDto
     {
         public string Nickname { get; set; } = "";
+        public HeroType Hero { get; set; } = HeroType.Dipper;
     }
 
     public class LobbyStateDto
@@ -32,6 +33,8 @@ namespace GravityFalls.Shared
         public string Name { get; set; } = "";
         public int Position { get; set; }
         public bool HasWaddles { get; set; }
+        public HeroType Hero { get; set; }
+        public string Status { get; set; } = "";
     }
 
     public class DiceResultDto
