@@ -1,0 +1,281 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="GravityFalls.Client.Pages.CharacterSelectionPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+    Title="Lobby">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Color x:Key="Ink">#2B1B12</Color>
+            <Color x:Key="Parchment1">#F6E7C6</Color>
+            <Color x:Key="Parchment2">#EBD5A6</Color>
+            <Color x:Key="Line">#B8935E</Color>
+
+            <Color x:Key="Accent">#C85B23</Color>
+            <Color x:Key="Muted">#7A5E3C</Color>
+            <Color x:Key="Good">#2E7D32</Color>
+            <Color x:Key="Warn">#B71C1C</Color>
+
+            <LinearGradientBrush x:Key="ParchmentBrush" EndPoint="0,1">
+                <GradientStop Color="{StaticResource Parchment1}" Offset="0" />
+                <GradientStop Color="{StaticResource Parchment2}" Offset="1" />
+            </LinearGradientBrush>
+
+            <Style TargetType="Label" x:Key="H1">
+                <Setter Property="TextColor" Value="{StaticResource Ink}" />
+                <Setter Property="FontSize" Value="26" />
+                <Setter Property="FontAttributes" Value="Bold" />
+            </Style>
+
+            <Style TargetType="Label" x:Key="H2">
+                <Setter Property="TextColor" Value="{StaticResource Ink}" />
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontAttributes" Value="Bold" />
+            </Style>
+
+            <Style TargetType="Label" x:Key="SmallMuted">
+                <Setter Property="TextColor" Value="{StaticResource Muted}" />
+                <Setter Property="FontSize" Value="12" />
+            </Style>
+
+            <Style TargetType="Button" x:Key="PrimaryButton">
+                <Setter Property="BackgroundColor" Value="{StaticResource Accent}" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="CornerRadius" Value="16" />
+                <Setter Property="HeightRequest" Value="52" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="FontSize" Value="18" />
+            </Style>
+
+            <Style TargetType="Button" x:Key="ChipButton">
+                <Setter Property="BackgroundColor" Value="#E8C98A" />
+                <Setter Property="TextColor" Value="{StaticResource Ink}" />
+                <Setter Property="CornerRadius" Value="14" />
+                <Setter Property="HeightRequest" Value="40" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="Padding" Value="14,0" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid>
+        <!-- Фон -->
+        <Image Source="wood_bg.png" Aspect="AspectFill" />
+        <BoxView Opacity="0.18" BackgroundColor="Black" />
+
+        <ScrollView>
+            <VerticalStackLayout Padding="24" Spacing="14"
+                                 HorizontalOptions="Center"
+                                 MaximumWidthRequest="900">
+
+                <Border Stroke="{StaticResource Line}"
+                        StyleClass="parchment-card"
+                        StrokeThickness="3"
+                        StrokeShape="RoundRectangle 18"
+                        Background="{StaticResource ParchmentBrush}">
+                    <Border.Shadow>
+                        <Shadow Opacity="0.45" Radius="18" Offset="0,8"/>
+                    </Border.Shadow>
+
+                    <Grid Padding="16" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" RowSpacing="6">
+                        <Label Grid.Row="0" Grid.Column="0"
+                               Text="ТАИНСТВЕННОЕ ЛОББИ"
+                               Style="{StaticResource H1}" />
+
+                        <Border Grid.Row="1" Grid.Column="0"
+                                Stroke="{StaticResource Line}"
+                                StrokeThickness="2"
+                                StrokeShape="RoundRectangle 14"
+                                BackgroundColor="#E8C98A"
+                                Padding="12,6">
+                            <HorizontalStackLayout Spacing="10">
+                                <Label Text="👥 4 игрока" TextColor="{StaticResource Ink}" FontAttributes="Bold"/>
+                                <Label Text="•" TextColor="{StaticResource Ink}" Opacity="0.6"/>
+                                <Label Text="PC - кооператив" TextColor="{StaticResource Ink}" FontAttributes="Bold"/>
+                            </HorizontalStackLayout>
+                        </Border>
+
+                        <Button x:Name="BackButton"
+                                Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"
+                                Text="Назад"
+                                Style="{StaticResource ChipButton}"
+                                HorizontalOptions="End"
+                                VerticalOptions="Center" />
+                    </Grid>
+                </Border>
+
+                <Grid ColumnDefinitions="*,12,Auto" RowDefinitions="Auto">
+                    <Border Grid.Column="0"
+                            StyleClass="parchment-card"
+                            Stroke="{StaticResource Line}"
+                            StrokeThickness="3"
+                            StrokeShape="RoundRectangle 18"
+                            Background="{StaticResource ParchmentBrush}">
+                        <Border.Shadow>
+                            <Shadow Opacity="0.35" Radius="16" Offset="0,6"/>
+                        </Border.Shadow>
+
+                        <VerticalStackLayout Padding="14" Spacing="8">
+                            <Label Text="Сессия" Style="{StaticResource H2}" />
+                            <Label Text="• TCP + XPacket" TextColor="{StaticResource Ink}" />
+                            <Label Text="• Шифрование после handshake" TextColor="{StaticResource Ink}" />
+                            <Label Text="• Сервер присылает список игроков" TextColor="{StaticResource Ink}" />
+                            <Label Text="Заметка: ищем улики и не сливаемся 🙂" Style="{StaticResource SmallMuted}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Border Grid.Column="2"
+                            StyleClass="parchment-chip"
+                            Stroke="{StaticResource Line}"
+                            StrokeThickness="2"
+                            StrokeShape="RoundRectangle 14"
+                            BackgroundColor="#E8C98A"
+                            Padding="12,10"
+                            VerticalOptions="Center">
+                    </Border>
+                </Grid>
+
+                <Border Stroke="{StaticResource Line}"
+                        StyleClass="parchment-card"
+                        StrokeThickness="3"
+                        StrokeShape="RoundRectangle 18"
+                        Background="{StaticResource ParchmentBrush}">
+                    <Border.Shadow>
+                        <Shadow Opacity="0.35" Radius="16" Offset="0,6"/>
+                    </Border.Shadow>
+
+                    <VerticalStackLayout Padding="16" Spacing="10">
+                        <Label Text="Выбери героя"
+                               Style="{StaticResource H2}" />
+                        <Label Text="Баффы из правил: каждый персонаж даёт уникальный бонус, но ходов с Пухлёй всё равно максимум 3."
+                               Style="{StaticResource SmallMuted}" />
+
+                        <CollectionView x:Name="HeroPicker"
+                                        SelectionMode="Single"
+                                        ItemsLayout="HorizontalList"
+                                        HorizontalScrollBarVisibility="Never"
+                                        VerticalScrollBarVisibility="Never">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Stroke="{StaticResource Line}"
+                                            StrokeThickness="2"
+                                            StrokeShape="RoundRectangle 14"
+                                            StyleClass="hero-card"
+                                            Padding="12"
+                                            Margin="0,0,8,0">
+                                        <Border.Shadow>
+                                            <Shadow Opacity="0.25" Radius="10" Offset="0,4" />
+                                        </Border.Shadow>
+
+                                        <VerticalStackLayout Spacing="4" WidthRequest="160">
+                                            <Label Text="{Binding Emoji}" FontSize="22" HorizontalOptions="Center" />
+                                            <Label Text="{Binding Title}" TextColor="{StaticResource Ink}" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                                            <Label Text="{Binding Motto}" Style="{StaticResource SmallMuted}" HorizontalTextAlignment="Center" />
+                                            <Label Text="{Binding Passive}"
+                                                   TextColor="{StaticResource Ink}"
+                                                   FontSize="12"
+                                                   LineBreakMode="WordWrap" />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
+                        <Label x:Name="HeroDescriptionLabel"
+                               Text="Пока выбран Диппер."
+                               TextColor="{StaticResource Ink}"
+                               FontAttributes="Bold" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label Text="Игроки" FontSize="20" FontAttributes="Bold" TextColor="White" Margin="0,6,0,0" />
+
+                <CollectionView x:Name="CarouselView">
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border Stroke="{StaticResource Line}"
+                                    StrokeThickness="3"
+                                    StrokeShape="RoundRectangle 18"
+                                    Background="{StaticResource ParchmentBrush}"
+                                    Margin="0,6,0,0">
+                                <Border.Shadow>
+                                    <Shadow Opacity="0.25" Radius="12" Offset="0,5"/>
+                                </Border.Shadow>
+
+                                <Grid Padding="14"
+                                      ColumnDefinitions="Auto,12,*,Auto"
+                                      RowDefinitions="Auto,Auto"
+                                      RowSpacing="6">
+
+                                    <!-- индикатор статуса (просто декоративный, пока на строках) -->
+                                    <Border Grid.RowSpan="2"
+                                            Stroke="{StaticResource Line}"
+                                            StrokeThickness="2"
+                                            StrokeShape="RoundRectangle 999"
+                                            BackgroundColor="#F9EFD6"
+                                            HeightRequest="52"
+                                            WidthRequest="52"
+                                            VerticalOptions="Center">
+                                        <Label Text="?"
+                                               FontSize="24"
+                                               FontAttributes="Bold"
+                                               TextColor="{StaticResource Ink}"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"/>
+                                    </Border>
+
+                                    <Label Grid.Column="2"
+                                           Grid.Row="0"
+                                           Text="{Binding .}"
+                                           TextColor="{StaticResource Ink}"
+                                           FontAttributes="Bold"
+                                           FontSize="16"
+                                           LineBreakMode="TailTruncation"/>
+
+                                    <HorizontalStackLayout Grid.Column="2" Grid.Row="1" Spacing="8">
+                                        <BoxView WidthRequest="10" HeightRequest="10" CornerRadius="5"
+                                                 BackgroundColor="{StaticResource Good}"
+                                                 VerticalOptions="Center"/>
+                                        <Label Text="Сервер будет обновлять состав/готовность."
+                                               Style="{StaticResource SmallMuted}" />
+                                    </HorizontalStackLayout>
+
+                                    <Button Grid.Column="3"
+                                            Grid.RowSpan="2"
+                                            Text="…"
+                                            Style="{StaticResource ChipButton}"
+                                            VerticalOptions="Center"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12" Margin="0,10,0,8">
+                    <Border Stroke="{StaticResource Line}"
+                            StrokeThickness="2"
+                            StrokeShape="RoundRectangle 16"
+                            BackgroundColor="#E8C98A"
+                            Padding="14,10">
+                        <Label Text="Confirm = готовность/старт (сервер решит)."
+                               TextColor="{StaticResource Ink}"
+                               FontAttributes="Bold"/>
+                    </Border>
+
+                    <Button x:Name="ConfirmButton"
+                            Grid.Column="1"
+                            Text="START"
+                            Style="{StaticResource PrimaryButton}">
+                        <Button.Shadow>
+                            <Shadow Opacity="0.35" Radius="12" Offset="0,6" />
+                        </Button.Shadow>
+                    </Button>
+                </Grid>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

@@ -8,4 +8,3 @@ namespace SavePuffle
         protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
     }
 }
-
