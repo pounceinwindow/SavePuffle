@@ -65,7 +65,8 @@ namespace GravityFalls.Server.Services
                     Id = p.Id,
                     Name = p.Nickname,
                     Position = p.Position,
-                    HasWaddles = p.HasWaddles
+                    HasWaddles = p.HasWaddles,
+                    Hero = p.Hero
                 });
             }
 

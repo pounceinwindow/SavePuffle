@@ -57,12 +57,13 @@ namespace GravityFalls.Server.Core
                         SlotIndex = i,
                         DisplayText = c.Nickname,
                         IsReady = c.IsReady,
-                        IsEmpty = false
+                        IsEmpty = false,
+                        Hero = c.Hero
                     });
                 }
                 else
                 {
-                    snapshot.Slots.Add(new LobbySlotDto { SlotIndex = i, DisplayText = "Empty", IsEmpty = true });
+                    snapshot.Slots.Add(new LobbySlotDto { SlotIndex = i, DisplayText = "Empty", IsEmpty = true, Hero = HeroType.Dipper });
                 }
             }
             Broadcast(Packet.Serialize(OpCode.LobbyUpdate, snapshot));

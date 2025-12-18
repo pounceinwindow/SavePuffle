@@ -141,6 +141,17 @@
                         <Border Stroke="{StaticResource Line}" StrokeThickness="2" StrokeShape="RoundRectangle 16" BackgroundColor="#E8C98A" Padding="12">
                             <Label Text="🐷 Пухля: чтобы победить — дойти до 30 и держать Пухлю. С Пухлей за ход максимум 3 клетки." TextColor="{StaticResource Ink}" FontAttributes="Bold" />
                         </Border>
+
+                        <Border Stroke="{StaticResource Line}" StrokeThickness="2" StrokeShape="RoundRectangle 16" BackgroundColor="#F9EFD6" Padding="12">
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="Легенда клеток" Style="{StaticResource H2}" />
+                                <Label Text="🔦 Подсказка: +1 (Диппер +2)" TextColor="{StaticResource Ink}" />
+                                <Label Text="😈 Озорство: -2 и Пухля падает (Мэйбл -1 и бережёт)" TextColor="{StaticResource Ink}" />
+                                <Label Text="🪙 Сундук: +1 (Стэн +2, может сразу забрать Пухлю)" TextColor="{StaticResource Ink}" />
+                                <Label Text="⚠️ Ловушка: -3 и без Пухли (Сус -1)" TextColor="{StaticResource Ink}" />
+                                <Label Text="🔵/🔴 Стрелки: ускоряют или замедляют" TextColor="{StaticResource Ink}" />
+                            </VerticalStackLayout>
+                        </Border>
                     </VerticalStackLayout>
                 </Border>
 

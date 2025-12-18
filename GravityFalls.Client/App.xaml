@@ -5,6 +5,7 @@
              x:Class="GravityFalls.Client.App">
     <Application.Resources>
         <ResourceDictionary>
+            <StyleSheet Source="Resources/Styles/Theme.css" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />

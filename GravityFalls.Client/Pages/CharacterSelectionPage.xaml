@@ -71,6 +71,7 @@
                                  MaximumWidthRequest="900">
 
                 <Border Stroke="{StaticResource Line}"
+                        StyleClass="parchment-card"
                         StrokeThickness="3"
                         StrokeShape="RoundRectangle 18"
                         Background="{StaticResource ParchmentBrush}">
@@ -107,6 +108,7 @@
 
                 <Grid ColumnDefinitions="*,12,Auto" RowDefinitions="Auto">
                     <Border Grid.Column="0"
+                            StyleClass="parchment-card"
                             Stroke="{StaticResource Line}"
                             StrokeThickness="3"
                             StrokeShape="RoundRectangle 18"
@@ -125,6 +127,7 @@
                     </Border>
 
                     <Border Grid.Column="2"
+                            StyleClass="parchment-chip"
                             Stroke="{StaticResource Line}"
                             StrokeThickness="2"
                             StrokeShape="RoundRectangle 14"
@@ -133,6 +136,59 @@
                             VerticalOptions="Center">
                     </Border>
                 </Grid>
+
+                <Border Stroke="{StaticResource Line}"
+                        StyleClass="parchment-card"
+                        StrokeThickness="3"
+                        StrokeShape="RoundRectangle 18"
+                        Background="{StaticResource ParchmentBrush}">
+                    <Border.Shadow>
+                        <Shadow Opacity="0.35" Radius="16" Offset="0,6"/>
+                    </Border.Shadow>
+
+                    <VerticalStackLayout Padding="16" Spacing="10">
+                        <Label Text="Выбери героя"
+                               Style="{StaticResource H2}" />
+                        <Label Text="Баффы из правил: каждый персонаж даёт уникальный бонус, но ходов с Пухлёй всё равно максимум 3."
+                               Style="{StaticResource SmallMuted}" />
+
+                        <CollectionView x:Name="HeroPicker"
+                                        SelectionMode="Single"
+                                        ItemsLayout="HorizontalList"
+                                        HorizontalScrollBarVisibility="Never"
+                                        VerticalScrollBarVisibility="Never">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Stroke="{StaticResource Line}"
+                                            StrokeThickness="2"
+                                            StrokeShape="RoundRectangle 14"
+                                            StyleClass="hero-card"
+                                            Padding="12"
+                                            Margin="0,0,8,0">
+                                        <Border.Shadow>
+                                            <Shadow Opacity="0.25" Radius="10" Offset="0,4" />
+                                        </Border.Shadow>
+
+                                        <VerticalStackLayout Spacing="4" WidthRequest="160">
+                                            <Label Text="{Binding Emoji}" FontSize="22" HorizontalOptions="Center" />
+                                            <Label Text="{Binding Title}" TextColor="{StaticResource Ink}" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                                            <Label Text="{Binding Motto}" Style="{StaticResource SmallMuted}" HorizontalTextAlignment="Center" />
+                                            <Label Text="{Binding Passive}"
+                                                   TextColor="{StaticResource Ink}"
+                                                   FontSize="12"
+                                                   LineBreakMode="WordWrap" />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
+                        <Label x:Name="HeroDescriptionLabel"
+                               Text="Пока выбран Диппер."
+                               TextColor="{StaticResource Ink}"
+                               FontAttributes="Bold" />
+                    </VerticalStackLayout>
+                </Border>
 
                 <Label Text="Игроки" FontSize="20" FontAttributes="Bold" TextColor="White" Margin="0,6,0,0" />
 
