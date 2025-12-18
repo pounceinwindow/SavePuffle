@@ -57,6 +57,8 @@ public sealed class GameClient : IDisposable
 
     public Task ToggleReadyAsync(CancellationToken ct = default) => SendAsync(OpCode.ToggleReady, new { }, ct);
     public Task RollDiceAsync(CancellationToken ct = default) => SendAsync(OpCode.RollDice, new { }, ct);
+    public Task SetHeroAsync(HeroType hero, CancellationToken ct = default) =>
+        SendAsync(OpCode.SetHero, new HeroSelectionDto { Hero = hero }, ct);
 
     public void Disconnect()
     {

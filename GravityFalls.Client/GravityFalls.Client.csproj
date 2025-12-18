@@ -76,19 +76,20 @@
 	  </Compile>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <MauiXaml Update="Pages\CharacterSelectionPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\GamePage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	</ItemGroup>
+        <ItemGroup>
+          <MauiXaml Update="Pages\CharacterSelectionPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+          </MauiXaml>
+          <MauiXaml Update="Pages\GamePage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+          </MauiXaml>
+        </ItemGroup>
 
-	<ItemGroup>
-	  <None Update="Pages\LobbyPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </None>
-	</ItemGroup>
+        <ItemGroup>
+          <MauiCss Include="Resources\Styles\Theme.css" />
+          <None Update="Pages\LobbyPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+          </None>
+        </ItemGroup>
 
 </Project>

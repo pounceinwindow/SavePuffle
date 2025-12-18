@@ -3,6 +3,8 @@ using Microsoft.Maui.Controls.Shapes;
 using Microsoft.Maui.Layouts;
 using SavePuffle.Services;
 using System.Collections.ObjectModel;
+using SavePuffle.Models;
+using System.Linq;
 
 namespace GravityFalls.Client.Pages;
 
@@ -18,7 +20,28 @@ public partial class GamePage : ContentPage
 
     private readonly Dictionary<int, Rect> _cellRects = new();
     private readonly Dictionary<int, Label> _pawnViews = new();
+    private readonly Dictionary<int, HeroType> _heroByPlayer = new();
     private readonly ObservableCollection<string> _playerLines = new();
+
+    private readonly Dictionary<int, TileType> _tileTypes = new()
+    {
+        [0] = TileType.Start,
+        [2] = TileType.Help,
+        [4] = TileType.Trap,
+        [5] = TileType.ArrowBlue,
+        [7] = TileType.Treasure,
+        [9] = TileType.ArrowRed,
+        [12] = TileType.Mischief,
+        [14] = TileType.Help,
+        [16] = TileType.Trap,
+        [18] = TileType.ArrowBlue,
+        [20] = TileType.Mischief,
+        [22] = TileType.Treasure,
+        [24] = TileType.ArrowRed,
+        [26] = TileType.Help,
+        [28] = TileType.Trap,
+        [30] = TileType.Finish
+    };
 
     private readonly Label _waddles = new()
     {
@@ -116,34 +139,14 @@ public partial class GamePage : ContentPage
 
     private View CreateCell(int pos)
     {
-        string title = pos switch
-        {
-            0 => "START",
-            30 => "FINISH",
-            31 => "—",
-            _ => pos.ToString()
-        };
-
-        string icon = pos switch
-        {
-            5 => "🔵➡️+2",
-            12 => "🔴⬅️-2",
-            20 => "😈",
-            30 => "🏁",
-            _ => ""
-        };
+        var visuals = DescribeCell(pos);
 
         var border = new Border
         {
             Stroke = Color.FromArgb("#B8935E"),
             StrokeThickness = 2,
             StrokeShape = new RoundRectangle { CornerRadius = 14 },
-            BackgroundColor = pos switch
-            {
-                0 => Color.FromArgb("#E8C98A"),
-                30 => Color.FromArgb("#FFD6A6"),
-                _ => Color.FromArgb("#F9EFD6")
-            }
+            BackgroundColor = visuals.background
         };
 
         var grid = new Grid { RowDefinitions = new RowDefinitionCollection { new RowDefinition(GridLength.Auto), new RowDefinition(GridLength.Star) } };
@@ -159,7 +162,7 @@ public partial class GamePage : ContentPage
 
         grid.Add(new Label
         {
-            Text = icon,
+            Text = visuals.icon,
             FontSize = 14,
             TextColor = Color.FromArgb("#2B1B12"),
             HorizontalTextAlignment = TextAlignment.Center,
@@ -168,6 +171,28 @@ public partial class GamePage : ContentPage
 
         border.Content = grid;
         return border;
+    }
+
+    private (string title, string icon, Color background) DescribeCell(int pos)
+    {
+        if (_tileTypes.TryGetValue(pos, out var type))
+        {
+            return type switch
+            {
+                TileType.Start => ("START", "🚩", Color.FromArgb("#E8C98A")),
+                TileType.Finish => ("FINISH", "🏁", Color.FromArgb("#FFD6A6")),
+                TileType.ArrowBlue => ("УСКОРЕНИЕ", "🔵➡️ +2", Color.FromArgb("#DEF1FF")),
+                TileType.ArrowRed => ("ШИШКИ", "🔴⬅️ -2", Color.FromArgb("#FFE1E1")),
+                TileType.Help => ("ПОДСКАЗКА", "🔦 +1/2", Color.FromArgb("#E8F5E9")),
+                TileType.Mischief => ("ОЗОРСТВО", "😈 -2", Color.FromArgb("#FFF3CD")),
+                TileType.Treasure => ("СУНДУК", "🪙 +1/2", Color.FromArgb("#FFF0D9")),
+                TileType.Trap => ("ЛОВУШКА", "⚠️ -3", Color.FromArgb("#FBE9E7")),
+                _ => (pos.ToString(), "", Color.FromArgb("#F9EFD6"))
+            };
+        }
+
+        if (pos == 31) return ("—", "", Color.FromArgb("#F0F0F0"));
+        return (pos.ToString(), "", Color.FromArgb("#F9EFD6"));
     }
 
     private static (int row, int col) PosToRowCol(int pos)
@@ -310,16 +335,25 @@ public partial class GamePage : ContentPage
         _playerLines.Clear();
         foreach (var p in state.Players.OrderBy(p => p.Id))
         {
+            var heroInfo = HeroCatalog.ByType(p.Hero);
+            _heroByPlayer[p.Id] = p.Hero;
+
             string turn = p.Id == state.CurrentTurnPlayerId ? "➡️" : "  ";
             string waddles = p.HasWaddles ? " 🐷" : "";
-            _playerLines.Add($"{turn} {p.Name} • клетка {p.Position}{waddles}");
+            _playerLines.Add($"{turn} {heroInfo.Emoji} {p.Name} • {heroInfo.Title} • клетка {p.Position}{waddles}");
         }
 
         // Header
         TurnLabel.Text = $"Ходит: {NameById(state.CurrentTurnPlayerId)}";
-        MeLabel.Text = _myId >= 0
-            ? $"Вы: {GameClient.Instance.Nickname} (id={_myId})"
-            : $"Вы: {GameClient.Instance.Nickname}";
+        if (_myId >= 0 && _heroByPlayer.TryGetValue(_myId, out var myHero))
+        {
+            var info = HeroCatalog.ByType(myHero);
+            MeLabel.Text = $"Вы: {GameClient.Instance.Nickname} • {info.Emoji} {info.Title}";
+        }
+        else
+        {
+            MeLabel.Text = $"Вы: {GameClient.Instance.Nickname}";
+        }
 
         // Roll button availability
         RollButton.IsEnabled = (_myId >= 0 && state.CurrentTurnPlayerId == _myId);
@@ -327,7 +361,7 @@ public partial class GamePage : ContentPage
         // Pawns + movement
         foreach (var p in state.Players)
         {
-            EnsurePawn(p.Id);
+            EnsurePawn(p.Id, p.Hero);
             MovePawn(p.Id, p.Position, animate);
         }
 
@@ -335,7 +369,7 @@ public partial class GamePage : ContentPage
         var owner = state.Players.FirstOrDefault(p => p.HasWaddles);
         if (owner != null)
         {
-            EnsurePawn(owner.Id);
+            EnsurePawn(owner.Id, owner.Hero);
             MoveWaddles(owner.Id, owner.Position, animate);
         }
         else
@@ -348,13 +382,17 @@ public partial class GamePage : ContentPage
         TryPulseCurrentTurn(state.CurrentTurnPlayerId);
     }
 
-    private void EnsurePawn(int playerId)
+    private void EnsurePawn(int playerId, HeroType hero)
     {
-        if (_pawnViews.ContainsKey(playerId)) return;
+        if (_pawnViews.TryGetValue(playerId, out var existing))
+        {
+            existing.Text = PawnEmoji(hero);
+            return;
+        }
 
         var pawn = new Label
         {
-            Text = PawnEmoji(playerId),
+            Text = PawnEmoji(hero),
             FontSize = 22,
             WidthRequest = PawnSize,
             HeightRequest = PawnSize,
@@ -475,12 +513,13 @@ public partial class GamePage : ContentPage
         return _state.Players.FirstOrDefault(p => p.Id == id)?.Name ?? $"Player#{id}";
     }
 
-    private static string PawnEmoji(int playerId) => playerId switch
+    private static string PawnEmoji(HeroType hero) => hero switch
     {
-        0 => "🧢",
-        1 => "🎀",
-        2 => "💼",
-        3 => "🕶️",
+        HeroType.Dipper => "🧢",
+        HeroType.Mabel => "🎀",
+        HeroType.Stan => "💼",
+        HeroType.Soos => "🛠️",
+        HeroType.Wendy => "🏹",
         _ => "👤"
     };
 
