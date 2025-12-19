@@ -1,32 +1,26 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\pounce\\Downloads\\SavePuffle_connected_final_clean2\\SavePuffle #U2014 #U043a#U043e#U043f#U0438#U044f\\GravityFalls.Shared\\GravityFalls.Shared.csproj": {}
+    "/Users/ostapmamykin/Desktop/lastsecsem/SavePuffle/GravityFalls.Shared/GravityFalls.Shared.csproj": {}
   },
   "projects": {
-    "C:\\Users\\pounce\\Downloads\\SavePuffle_connected_final_clean2\\SavePuffle #U2014 #U043a#U043e#U043f#U0438#U044f\\GravityFalls.Shared\\GravityFalls.Shared.csproj": {
+    "/Users/ostapmamykin/Desktop/lastsecsem/SavePuffle/GravityFalls.Shared/GravityFalls.Shared.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\pounce\\Downloads\\SavePuffle_connected_final_clean2\\SavePuffle #U2014 #U043a#U043e#U043f#U0438#U044f\\GravityFalls.Shared\\GravityFalls.Shared.csproj",
+        "projectUniqueName": "/Users/ostapmamykin/Desktop/lastsecsem/SavePuffle/GravityFalls.Shared/GravityFalls.Shared.csproj",
         "projectName": "GravityFalls.Shared",
-        "projectPath": "C:\\Users\\pounce\\Downloads\\SavePuffle_connected_final_clean2\\SavePuffle #U2014 #U043a#U043e#U043f#U0438#U044f\\GravityFalls.Shared\\GravityFalls.Shared.csproj",
-        "packagesPath": "C:\\Users\\pounce\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\pounce\\Downloads\\SavePuffle_connected_final_clean2\\SavePuffle #U2014 #U043a#U043e#U043f#U0438#U044f\\GravityFalls.Shared\\obj\\",
+        "projectPath": "/Users/ostapmamykin/Desktop/lastsecsem/SavePuffle/GravityFalls.Shared/GravityFalls.Shared.csproj",
+        "packagesPath": "/Users/ostapmamykin/.nuget/packages/",
+        "outputPath": "/Users/ostapmamykin/Desktop/lastsecsem/SavePuffle/GravityFalls.Shared/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\pounce\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/ostapmamykin/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
+          "/usr/local/share/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -45,7 +39,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "10.0.100"
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net9.0": {
@@ -66,7 +60,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.308/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

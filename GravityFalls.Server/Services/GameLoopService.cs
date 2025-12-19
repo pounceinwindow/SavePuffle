@@ -11,9 +11,8 @@ namespace GravityFalls.Server.Services
         private List<ClientSession> _players = new();
         private int _currentTurnIndex = 0;
 
-        // Waddles state
-        private int _waddlesPosition = -1; // -1 = not spawned (until Signpost)
-        private int _waddlesCarrierId = -1; // -1 = on board
+        private int _waddlesPosition = -1; 
+        private int _waddlesCarrierId = -1; 
 
         public bool IsGameStarted { get; private set; } = false;
 
@@ -30,7 +29,6 @@ namespace GravityFalls.Server.Services
             _waddlesPosition = -1;
             _waddlesCarrierId = -1;
 
-            // Reset players
             foreach (var p in _players)
             {
                 p.Position = 0;
@@ -49,10 +47,8 @@ namespace GravityFalls.Server.Services
             if (!IsGameStarted) return;
             if (_players.Count == 0) return;
 
-            // Turn validation
             if (_players[_currentTurnIndex].Id != player.Id) return;
 
-            // If the player must skip - consume skip and advance turn.
             if (player.SkipNextTurn)
             {
                 player.SkipNextTurn = false;
@@ -64,23 +60,19 @@ namespace GravityFalls.Server.Services
 
             int roll = _rng.Next(1, 7);
 
-            // Hero buff: Mabel +1 if Waddles shares a cell with any player
             if (player.Hero == HeroType.Mabel && IsWaddlesOnCellWithAnyPlayer())
             {
                 roll += 1;
                 EmitEvent(GameEventKind.Good, "🎀 Мэйбл: +1 к кубику (Пухля на клетке с игроком)");
             }
 
-            // Broadcast dice result (after modifiers)
             _server.Broadcast(Packet.Serialize(OpCode.DiceResult, new DiceResultDto { PlayerId = player.Id, Value = roll }));
 
-            // Resolve movement + tile effects
             var outcome = _movement.ExecuteTurn(player, roll, _players, ref _waddlesPosition, ref _waddlesCarrierId, dto =>
             {
                 _server.Broadcast(Packet.Serialize(OpCode.GameEvent, dto));
             });
 
-            // Victory condition (project): reach 30 while carrying Waddles
             if (player.Position >= BoardConfig.FinishLine && _waddlesCarrierId == player.Id)
             {
                 var winPacket = Packet.Serialize(OpCode.GameOver, new GameOverDto { WinnerName = player.Nickname });

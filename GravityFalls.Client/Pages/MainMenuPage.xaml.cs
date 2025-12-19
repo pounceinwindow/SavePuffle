@@ -18,7 +18,7 @@ public partial class MainMenuPage : ContentPage
         };
         ExitButton.Clicked += (_, __) =>
         {
-            try { Application.Current?.Quit(); } catch { /* platform-specific */ }
+            try { Application.Current?.Quit(); } catch { }
         };
     }
 
@@ -54,7 +54,6 @@ public partial class MainMenuPage : ContentPage
     {
         if (string.IsNullOrWhiteSpace(input)) return ("127.0.0.1", 8888);
 
-        // Accept: "ip", "ip:port", "host", "host:port"
         string host = input;
         int port = 8888;
 

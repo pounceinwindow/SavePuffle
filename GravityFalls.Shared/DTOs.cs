@@ -12,7 +12,6 @@ namespace GravityFalls.Shared
 
     public class ExchangeDto
     {
-        // no fields for now (request = "try exchange")
     }
 
     public enum GameEventKind : byte
@@ -49,13 +48,10 @@ namespace GravityFalls.Shared
         public List<PlayerStateDto> Players { get; set; } = new();
         public int CurrentTurnPlayerId { get; set; }
 
-        /// <summary>-1 = not spawned (until Signpost), otherwise 0..30</summary>
         public int WaddlesPosition { get; set; } = -1;
 
-        /// <summary>-1 = on board, otherwise player Id who carries Waddles</summary>
         public int WaddlesCarrierId { get; set; } = -1;
 
-        /// <summary>Optional: last dice value, useful for UI.</summary>
         public int LastDiceValue { get; set; } = 0;
     }
 
@@ -66,7 +62,6 @@ namespace GravityFalls.Shared
         public HeroType Hero { get; set; } = HeroType.Dipper;
         public int Position { get; set; }
 
-        // Variant A: tokens instead of card hands
         public int HelpTokens { get; set; } = 0;
         public int MischiefTokens { get; set; } = 0;
 

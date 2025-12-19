@@ -376,14 +376,12 @@ public partial class GamePage : ContentPage
     {
         _state = state;
 
-        // Resolve my ID (match by nickname)
         if (_myId < 0)
         {
             var me = state.Players.FirstOrDefault(p => p.Name == GameClient.Instance.Nickname);
             if (me != null) _myId = me.Id;
         }
 
-        // Header
         TurnLabel.Text = $"Ходит: {NameById(state.CurrentTurnPlayerId)}";
         MeLabel.Text = _myId >= 0
             ? $"Вы: {GameClient.Instance.Nickname} (id={_myId})"
@@ -395,7 +393,6 @@ public partial class GamePage : ContentPage
                 ? $"🐷 у {NameById(state.WaddlesCarrierId)}"
                 : $"🐷 на клетке {state.WaddlesPosition}");
 
-        // Player cards
         _playerCards.Clear();
         foreach (var p in state.Players.OrderBy(p => p.Id))
         {
@@ -414,21 +411,18 @@ public partial class GamePage : ContentPage
             });
         }
 
-        // Buttons
         bool isMyTurn = (_myId >= 0 && state.CurrentTurnPlayerId == _myId);
         RollButton.IsEnabled = isMyTurn;
 
         ExchangeButton.IsEnabled = isMyTurn && CanExchange();
         HintLabel.Text = isMyTurn ? "Твой ход." : "Ожидание хода.";
 
-        // Pawns
         foreach (var p in state.Players)
         {
             EnsurePawn(p.Id, p.Hero);
             MovePawn(p.Id, p.Position, animate);
         }
 
-        // Waddles token
         if (state.WaddlesPosition >= 0)
         {
             MoveWaddles(state.WaddlesPosition, state.WaddlesCarrierId, animate);
@@ -459,7 +453,6 @@ public partial class GamePage : ContentPage
     {
         if (_pawnViews.ContainsKey(playerId))
         {
-            // Update emoji if needed
             _pawnViews[playerId].Text = HeroInfo.Emoji(hero);
             return;
         }

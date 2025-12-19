@@ -11,7 +11,6 @@ namespace GravityFalls.Server.Core
         public bool IsReady { get; set; }
         public bool IsConnected => _client.Connected;
 
-        // Game state (server-authoritative)
         public int Position { get; set; } = 0;
         public bool HasWaddles { get; set; } = false;
         public HeroType Hero { get; set; } = HeroType.Dipper;
@@ -34,7 +33,7 @@ namespace GravityFalls.Server.Core
         public void Send(byte[] data)
         {
             if (!IsConnected) return;
-            try { _stream.Write(data); } catch { /* ignore */ }
+            try { _stream.Write(data); } catch { }
         }
 
         public async Task ProcessLoop()

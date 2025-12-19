@@ -4,10 +4,6 @@ using System.Text.Json;
 
 namespace SavePuffle.Services;
 
-/// <summary>
-/// Tiny TCP client for the current server protocol:
-/// [4 bytes length (little-endian)] [1 byte OpCode] [AES-encrypted JSON body]
-/// </summary>
 public sealed class GameClient : IDisposable
 {
     public static GameClient Instance { get; } = new();
@@ -19,10 +15,8 @@ public sealed class GameClient : IDisposable
 
     public bool IsConnected => _client?.Connected ?? false;
 
-    /// <summary>Nickname that was used on ConnectAsync.</summary>
     public string Nickname { get; private set; } = "";
 
-    // Cache last known states so UI can attach late (after navigation)
     public LobbyStateDto? LastLobbyState { get; private set; }
     public GameStateDto? LastGameState { get; private set; }
     public DiceResultDto? LastDiceResult { get; private set; }
@@ -52,7 +46,6 @@ public sealed class GameClient : IDisposable
         _receiveCts = new CancellationTokenSource();
         _ = Task.Run(() => ReceiveLoopAsync(_receiveCts.Token));
 
-        // Immediately send Login with Nickname (email removed).
         await SendAsync(OpCode.Login, new LoginDto { Nickname = nickname }, ct);
     }
 
@@ -63,9 +56,9 @@ public sealed class GameClient : IDisposable
 
     public void Disconnect()
     {
-        try { _receiveCts?.Cancel(); } catch { /* ignore */ }
-        try { _stream?.Close(); } catch { /* ignore */ }
-        try { _client?.Close(); } catch { /* ignore */ }
+        try { _receiveCts?.Cancel(); } catch { }
+        try { _stream?.Close(); } catch { }
+        try { _client?.Close(); } catch { }
 
         _receiveCts?.Dispose();
         _receiveCts = null;
@@ -114,7 +107,7 @@ public sealed class GameClient : IDisposable
                 if (!ok) break;
 
                 int length = BitConverter.ToInt32(lenBuf, 0);
-                if (length <= 0 || length > 1024 * 1024) // sanity limit
+                if (length <= 0 || length > 1024 * 1024) 
                     throw new InvalidOperationException($"Bad packet length: {length}");
 
                 var body = new byte[length];
@@ -129,7 +122,6 @@ public sealed class GameClient : IDisposable
         }
         catch (OperationCanceledException)
         {
-            // expected on Disconnect
         }
         catch (Exception ex)
         {
