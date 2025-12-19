@@ -376,14 +376,12 @@ public partial class GamePage : ContentPage
     {
         _state = state;
 
-        // Resolve my ID (match by nickname)
         if (_myId < 0)
         {
             var me = state.Players.FirstOrDefault(p => p.Name == GameClient.Instance.Nickname);
             if (me != null) _myId = me.Id;
         }
 
-        // Header
         TurnLabel.Text = $"Ходит: {NameById(state.CurrentTurnPlayerId)}";
         MeLabel.Text = _myId >= 0
             ? $"Вы: {GameClient.Instance.Nickname} (id={_myId})"

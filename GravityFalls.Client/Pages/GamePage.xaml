@@ -71,7 +71,6 @@
         <BoxView Opacity="0.18" BackgroundColor="Black" />
 
         <Grid Padding="16" RowDefinitions="Auto,*" RowSpacing="12">
-            <!-- Header -->
             <Border Stroke="{StaticResource Line}" StrokeThickness="3" StrokeShape="RoundRectangle 18" Background="{StaticResource ParchmentBrush}">
                 <Border.Shadow>
                     <Shadow Opacity="0.45" Radius="18" Offset="0,8" />
@@ -89,10 +88,8 @@
                 </Grid>
             </Border>
 
-            <!-- Body -->
             <Grid Grid.Row="1" ColumnDefinitions="*,12,360" RowDefinitions="*">
 
-                <!-- Board -->
                 <Border Grid.Column="0" Stroke="{StaticResource Line}" StrokeThickness="3" StrokeShape="RoundRectangle 18" Background="{StaticResource ParchmentBrush}">
                     <Border.Shadow>
                         <Shadow Opacity="0.35" Radius="16" Offset="0,6" />
@@ -114,7 +111,6 @@
                     </Grid>
                 </Border>
 
-                <!-- Sidebar -->
                 <Border Grid.Column="2" Stroke="{StaticResource Line}" StrokeThickness="3" StrokeShape="RoundRectangle 18" Background="{StaticResource ParchmentBrush}">
                     <Border.Shadow>
                         <Shadow Opacity="0.35" Radius="16" Offset="0,6" />
@@ -156,7 +152,6 @@
                             </CollectionView.ItemTemplate>
                         </CollectionView>
 
-                        <!-- Actions -->
                         <Border Grid.Row="2" Stroke="{StaticResource Line}" StrokeThickness="2" StrokeShape="RoundRectangle 16" BackgroundColor="#F9EFD6" Padding="12">
                             <VerticalStackLayout Spacing="8">
                                 <Label Text="Действия" Style="{StaticResource H2}" />
@@ -176,7 +171,6 @@
                             </VerticalStackLayout>
                         </Border>
 
-                        <!-- Event log -->
                         <Border Grid.Row="3" Stroke="{StaticResource Line}" StrokeThickness="2" StrokeShape="RoundRectangle 16" BackgroundColor="#E8C98A" Padding="12">
                             <Grid RowDefinitions="Auto,*" RowSpacing="8">
                                 <Label Text="События" TextColor="{StaticResource Ink}" FontAttributes="Bold" />

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\pounce\\Downloads\\SavePuffle_connected_final_clean2\\SavePuffle #U2014 #U043a#U043e#U043f#U0438#U044f\\GravityFalls.Server\\GravityFalls.Server.csproj": {}
+    "C:\\Users\\pounce\\source\\repos\\SavePuffle\\GravityFalls.Server\\GravityFalls.Server.csproj": {}
   },
   "projects": {
-    "C:\\Users\\pounce\\Downloads\\SavePuffle_connected_final_clean2\\SavePuffle #U2014 #U043a#U043e#U043f#U0438#U044f\\GravityFalls.Server\\GravityFalls.Server.csproj": {
+    "C:\\Users\\pounce\\source\\repos\\SavePuffle\\GravityFalls.Server\\GravityFalls.Server.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\pounce\\Downloads\\SavePuffle_connected_final_clean2\\SavePuffle #U2014 #U043a#U043e#U043f#U0438#U044f\\GravityFalls.Server\\GravityFalls.Server.csproj",
+        "projectUniqueName": "C:\\Users\\pounce\\source\\repos\\SavePuffle\\GravityFalls.Server\\GravityFalls.Server.csproj",
         "projectName": "GravityFalls.Server",
-        "projectPath": "C:\\Users\\pounce\\Downloads\\SavePuffle_connected_final_clean2\\SavePuffle #U2014 #U043a#U043e#U043f#U0438#U044f\\GravityFalls.Server\\GravityFalls.Server.csproj",
+        "projectPath": "C:\\Users\\pounce\\source\\repos\\SavePuffle\\GravityFalls.Server\\GravityFalls.Server.csproj",
         "packagesPath": "C:\\Users\\pounce\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\pounce\\Downloads\\SavePuffle_connected_final_clean2\\SavePuffle #U2014 #U043a#U043e#U043f#U0438#U044f\\GravityFalls.Server\\obj\\",
+        "outputPath": "C:\\Users\\pounce\\source\\repos\\SavePuffle\\GravityFalls.Server\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -33,8 +33,8 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "C:\\Users\\pounce\\Downloads\\SavePuffle_connected_final_clean2\\SavePuffle #U2014 #U043a#U043e#U043f#U0438#U044f\\GravityFalls.Shared\\GravityFalls.Shared.csproj": {
-                "projectPath": "C:\\Users\\pounce\\Downloads\\SavePuffle_connected_final_clean2\\SavePuffle #U2014 #U043a#U043e#U043f#U0438#U044f\\GravityFalls.Shared\\GravityFalls.Shared.csproj"
+              "C:\\Users\\pounce\\source\\repos\\SavePuffle\\GravityFalls.Shared\\GravityFalls.Shared.csproj": {
+                "projectPath": "C:\\Users\\pounce\\source\\repos\\SavePuffle\\GravityFalls.Shared\\GravityFalls.Shared.csproj"
               }
             }
           }
@@ -74,14 +74,14 @@
         }
       }
     },
-    "C:\\Users\\pounce\\Downloads\\SavePuffle_connected_final_clean2\\SavePuffle #U2014 #U043a#U043e#U043f#U0438#U044f\\GravityFalls.Shared\\GravityFalls.Shared.csproj": {
+    "C:\\Users\\pounce\\source\\repos\\SavePuffle\\GravityFalls.Shared\\GravityFalls.Shared.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\pounce\\Downloads\\SavePuffle_connected_final_clean2\\SavePuffle #U2014 #U043a#U043e#U043f#U0438#U044f\\GravityFalls.Shared\\GravityFalls.Shared.csproj",
+        "projectUniqueName": "C:\\Users\\pounce\\source\\repos\\SavePuffle\\GravityFalls.Shared\\GravityFalls.Shared.csproj",
         "projectName": "GravityFalls.Shared",
-        "projectPath": "C:\\Users\\pounce\\Downloads\\SavePuffle_connected_final_clean2\\SavePuffle #U2014 #U043a#U043e#U043f#U0438#U044f\\GravityFalls.Shared\\GravityFalls.Shared.csproj",
+        "projectPath": "C:\\Users\\pounce\\source\\repos\\SavePuffle\\GravityFalls.Shared\\GravityFalls.Shared.csproj",
         "packagesPath": "C:\\Users\\pounce\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\pounce\\Downloads\\SavePuffle_connected_final_clean2\\SavePuffle #U2014 #U043a#U043e#U043f#U0438#U044f\\GravityFalls.Shared\\obj\\",
+        "outputPath": "C:\\Users\\pounce\\source\\repos\\SavePuffle\\GravityFalls.Shared\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

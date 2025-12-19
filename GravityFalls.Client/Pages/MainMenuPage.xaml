@@ -52,7 +52,6 @@
                                  HorizontalOptions="Center"
                                  MaximumWidthRequest="460">
 
-                <!-- Логотип -->
                 <Image Source="gravity_logo.png"
                        HeightRequest="90"
                        HorizontalOptions="Center"

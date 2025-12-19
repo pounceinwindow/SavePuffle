@@ -69,7 +69,6 @@
     </ContentPage.Resources>
 
     <Grid>
-        <!-- Background -->
         <Image Source="wood_bg.png" Aspect="AspectFill" />
         <BoxView Opacity="0.18" BackgroundColor="Black" />
 
@@ -78,7 +77,6 @@
                                  HorizontalOptions="Center"
                                  MaximumWidthRequest="900">
 
-                <!-- Header -->
                 <Border Stroke="{StaticResource Line}"
                         StrokeThickness="3"
                         StrokeShape="RoundRectangle 18"
@@ -114,7 +112,6 @@
                     </Grid>
                 </Border>
 
-                <!-- Hero selection -->
                 <Border Stroke="{StaticResource Line}"
                         StrokeThickness="3"
                         StrokeShape="RoundRectangle 18"
@@ -159,7 +156,6 @@
                                       RowDefinitions="Auto,Auto"
                                       RowSpacing="6">
 
-                                    <!-- Hero icon -->
                                     <Border Grid.RowSpan="2"
                                             Stroke="{StaticResource Line}"
                                             StrokeThickness="2"

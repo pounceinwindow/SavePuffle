@@ -109,14 +109,12 @@ public partial class CharacterSelectionPage : ContentPage
                 });
             }
 
-            // Disable heroes already taken by other players (unique heroes in a 4p party)
             SetHeroButtonState(HeroDipper, HeroType.Dipper, takenHeroes);
             SetHeroButtonState(HeroMabel, HeroType.Mabel, takenHeroes);
             SetHeroButtonState(HeroStan, HeroType.Stan, takenHeroes);
             SetHeroButtonState(HeroSoos, HeroType.Soos, takenHeroes);
             SetHeroButtonState(HeroWendy, HeroType.Wendy, takenHeroes);
 
-            // Update READY button text
             var me = lobby.Slots.FirstOrDefault(x => x.PlayerId == _myId);
             if (me != null && !me.IsEmpty)
                 ConfirmButton.Text = me.IsReady ? "UNREADY" : "READY";
@@ -129,7 +127,6 @@ public partial class CharacterSelectionPage : ContentPage
     {
         bool takenByOther = taken.Contains(hero);
 
-        // allow our currently selected hero even if taken list contains it (it can be us)
         if (_myId >= 0)
         {
             var mine = _slots.FirstOrDefault(s => s.PlayerId == _myId);
@@ -139,7 +136,6 @@ public partial class CharacterSelectionPage : ContentPage
         btn.IsEnabled = !takenByOther;
         btn.Opacity = btn.IsEnabled ? 1 : 0.45;
 
-        // little visual marker for current selection
         btn.BackgroundColor = hero == _selectedHero ? Color.FromArgb("#E8C98A") : Color.FromArgb("#F9EFD6");
     }
 
