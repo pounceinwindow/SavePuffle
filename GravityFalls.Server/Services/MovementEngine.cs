@@ -12,11 +12,12 @@ namespace GravityFalls.Server.Services
         {
             bool extraTurn = false;
 
-            // Carry state at start
+            if (waddlesPosition >= 0 && player.Position == waddlesPosition && waddlesCarrierId != player.Id)
+                PickupWaddles(player, allPlayers, ref waddlesPosition, ref waddlesCarrierId, emit);
+
             bool carrying = (waddlesCarrierId == player.Id);
             int stepsWithWaddles = 0;
 
-            // --- Forward movement (dice) ---
             int max = BoardConfig.FinishLine;
             for (int i = 0; i < diceValue; i++)
             {
@@ -31,45 +32,30 @@ namespace GravityFalls.Server.Services
 
                 player.Position = next;
 
+                if (waddlesPosition < 0 && BoardConfig.GetTile(player.Position) == TileType.Signpost)
+                    break;
+
                 if (carrying)
                 {
                     stepsWithWaddles++;
                     waddlesPosition = player.Position;
                 }
 
-                // Auto-pickup / steal when passing the Waddles cell
                 if (waddlesPosition >= 0 && player.Position == waddlesPosition && waddlesCarrierId != player.Id)
                 {
-                    // Drop from previous carrier
-                    if (waddlesCarrierId >= 0)
-                    {
-                        int carrierIdSnapshot = waddlesCarrierId;
-                        var prev = allPlayers.FirstOrDefault(p => p.Id == carrierIdSnapshot);
-                        if (prev != null) prev.HasWaddles = false;
-                    }
+                    PickupWaddles(player, allPlayers, ref waddlesPosition, ref waddlesCarrierId, emit);
 
-                    waddlesCarrierId = player.Id;
-                    player.HasWaddles = true;
-
-                    // IMPORTANT (rulebook): steps before pickup don't matter => you still can do up to 3 cells AFTER pickup.
                     carrying = true;
                     stepsWithWaddles = 0;
-
-                    // Pig follows the carrier
-                    waddlesPosition = player.Position;
-
-                    emit(new GameEventDto { Kind = GameEventKind.Good, Message = $"🐷 {player.Nickname} подхватил(а) Пухлю!" });
                 }
             }
 
-            // If we are carrying, keep pig at our final cell
             if (waddlesCarrierId == player.Id)
             {
                 player.HasWaddles = true;
                 waddlesPosition = player.Position;
             }
 
-            // --- Special cell (ONLY if arrived moving forward) ---
             TileType tile = BoardConfig.GetTile(player.Position);
             switch (tile)
             {
@@ -86,7 +72,6 @@ namespace GravityFalls.Server.Services
                         {
                             int before = player.Position;
 
-                            // If we are forced back while carrying - drop Waddles (rulebook).
                             if (delta < 0)
                                 DropWaddlesIfCarrying(player, ref waddlesPosition, ref waddlesCarrierId, emit);
 
@@ -106,7 +91,7 @@ namespace GravityFalls.Server.Services
                         int before = player.HelpTokens;
                         if (player.Hero == HeroType.Dipper && before == 0)
                         {
-                            player.HelpTokens += 2; // 1 for the cell + 1 bonus
+                            player.HelpTokens += 2;
                             emit(new GameEventDto { Kind = GameEventKind.Good, Message = $"🧢 Диппер: ✨ было 0, получаешь +2✨" });
                         }
                         else
@@ -162,12 +147,13 @@ namespace GravityFalls.Server.Services
                     {
                         if (waddlesPosition < 0)
                         {
-                            int spawn = _rng.Next(1, BoardConfig.FinishLine); // 1..29
-                            waddlesPosition = spawn;
+                            int d = _rng.Next(1, 7);
+                            int spawn = BoardConfig.WaddlesSpawnCellsByDice[Math.Clamp(d, 1, 6) - 1];
+                            waddlesPosition = Math.Clamp(spawn, 0, BoardConfig.FinishLine);
                             waddlesCarrierId = -1;
                             foreach (var p in allPlayers) p.HasWaddles = false;
 
-                            emit(new GameEventDto { Kind = GameEventKind.Info, Message = $"🪧 Указатель: Пухля появился на клетке {spawn}." });
+                            emit(new GameEventDto { Kind = GameEventKind.Info, Message = $"🪧 Указатель: Пухля нашёлся! Кубик: {d}. Пухля на клетке {waddlesPosition}." });
                         }
                         else
                         {
@@ -178,15 +164,12 @@ namespace GravityFalls.Server.Services
 
                 case TileType.Totem:
                     {
-                        // In the full boardgame this opens a Wonder Shack card.
-                        // For this project variant A we give a small bonus.
                         player.HelpTokens += 1;
                         emit(new GameEventDto { Kind = GameEventKind.Good, Message = $"🗿 Тотем: {player.Nickname} получает +1✨" });
                         break;
                     }
             }
 
-            // Sync HasWaddles flag for everyone
             foreach (var p in allPlayers)
                 p.HasWaddles = (waddlesCarrierId == p.Id);
 
@@ -222,10 +205,30 @@ namespace GravityFalls.Server.Services
             return true;
         }
 
+        private static void PickupWaddles(ClientSession player, List<ClientSession> allPlayers,
+            ref int waddlesPosition, ref int waddlesCarrierId, Action<GameEventDto> emit)
+        {
+            if (waddlesPosition < 0) return;
+            if (waddlesCarrierId == player.Id) return;
+            if (player.Position != waddlesPosition) return;
+
+            if (waddlesCarrierId >= 0)
+            {
+                int carrierIdSnapshot = waddlesCarrierId;
+                var prev = allPlayers.FirstOrDefault(p => p.Id == carrierIdSnapshot);
+                if (prev != null) prev.HasWaddles = false;
+            }
+
+            waddlesCarrierId = player.Id;
+            player.HasWaddles = true;
+            waddlesPosition = player.Position;
+
+            emit(new GameEventDto { Kind = GameEventKind.Good, Message = $"🐷 {player.Nickname} подхватил(а) Пухлю!" });
+        }
+
         private void ApplyRandomMischief(ClientSession player, List<ClientSession> allPlayers,
             ref int waddlesPosition, ref int waddlesCarrierId, Action<GameEventDto> emit)
         {
-            // A small pool of debuffs based on the rulebook examples.
             int roll = _rng.Next(0, 4);
             switch (roll)
             {
@@ -280,7 +283,6 @@ namespace GravityFalls.Server.Services
         {
             if (waddlesCarrierId != player.Id) return;
 
-            // Rulebook: Waddles never moves back. So we drop him where we were BEFORE moving back.
             waddlesPosition = player.Position;
             waddlesCarrierId = -1;
             player.HasWaddles = false;

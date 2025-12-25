@@ -11,7 +11,7 @@ public partial class GamePage : ContentPage
     private const int Cols = 8;
     private const int Rows = 4;
 
-    private const double CellSize = 72;
+    private const double CellSize = 84;
     private const double Gap = 8;
     private const double Pad = 12;
     private const double PawnSize = 28;
@@ -251,6 +251,24 @@ public partial class GamePage : ContentPage
             return;
         }
 
+        var me = _state.Players.FirstOrDefault(p => p.Id == _myId);
+        if (me == null) return;
+
+        var rollDto = new RollDiceDto();
+
+        int startTradeCost = me.Hero == HeroType.Wendy ? 2 : 3;
+        if (me.MischiefTokens >= startTradeCost)
+        {
+            bool trade = await DisplayAlert("Обмен", $"Обменять {startTradeCost}😈 на 1✨ перед броском?", "Да", "Нет");
+            rollDto.TradeMischiefForHelp = trade;
+        }
+
+        if (me.Hero == HeroType.Mabel && _state.WaddlesPosition >= 0 && _state.Players.Any(p => p.Position == _state.WaddlesPosition))
+        {
+            bool useBonus = await DisplayAlert("Мэйбл", "+1 к кубику? (Пухля на клетке с игроком)", "Да", "Нет");
+            rollDto.UseMabelBonus = useBonus;
+        }
+
         RollButton.IsEnabled = false;
         ExchangeButton.IsEnabled = false;
         HintLabel.Text = "Бросаем кубик...";
@@ -259,7 +277,7 @@ public partial class GamePage : ContentPage
 
         try
         {
-            await GameClient.Instance.RollDiceAsync();
+            await GameClient.Instance.RollDiceAsync(rollDto);
         }
         catch (Exception ex)
         {
@@ -393,7 +411,6 @@ public partial class GamePage : ContentPage
                 ? $"🐷 у {NameById(state.WaddlesCarrierId)}"
                 : $"🐷 на клетке {state.WaddlesPosition}");
 
-        // Player cards
         _playerCards.Clear();
         foreach (var p in state.Players.OrderBy(p => p.Id))
         {
@@ -412,21 +429,18 @@ public partial class GamePage : ContentPage
             });
         }
 
-        // Buttons
         bool isMyTurn = (_myId >= 0 && state.CurrentTurnPlayerId == _myId);
         RollButton.IsEnabled = isMyTurn;
 
         ExchangeButton.IsEnabled = isMyTurn && CanExchange();
         HintLabel.Text = isMyTurn ? "Твой ход." : "Ожидание хода.";
 
-        // Pawns
         foreach (var p in state.Players)
         {
             EnsurePawn(p.Id, p.Hero);
             MovePawn(p.Id, p.Position, animate);
         }
 
-        // Waddles token
         if (state.WaddlesPosition >= 0)
         {
             MoveWaddles(state.WaddlesPosition, state.WaddlesCarrierId, animate);
@@ -457,7 +471,6 @@ public partial class GamePage : ContentPage
     {
         if (_pawnViews.ContainsKey(playerId))
         {
-            // Update emoji if needed
             _pawnViews[playerId].Text = HeroInfo.Emoji(hero);
             return;
         }

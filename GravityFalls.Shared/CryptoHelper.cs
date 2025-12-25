@@ -5,7 +5,7 @@ namespace GravityFalls.Shared
 {
     public static class CryptoHelper
     {
-        private static readonly byte[] Key = Encoding.UTF8.GetBytes("1234567890123456"); // 128-bit
+        private static readonly byte[] Key = Encoding.UTF8.GetBytes("1234567890123456");
         private static readonly byte[] IV = Encoding.UTF8.GetBytes("1234567890123456");
 
         public static byte[] Encrypt(string plainText)

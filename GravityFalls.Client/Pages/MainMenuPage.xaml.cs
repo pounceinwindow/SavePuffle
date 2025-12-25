@@ -11,14 +11,32 @@ public partial class MainMenuPage : ContentPage
         StartButton.Clicked += StartButtonOnClicked;
         RulesButton.Clicked += async (_, __) =>
         {
-            await DisplayAlert(
-                "Rules",
-                "1) Подключись к серверу\n2) В лобби нажми START, чтобы переключать готовность\n3) Когда все готовы — сервер стартанёт игру",
-                "OK");
+            var closeBtn = new Button
+            {
+                Text = "Закрыть",
+                VerticalOptions = LayoutOptions.End
+            };
+
+            var page = new ContentPage
+            {
+                Content = new Grid
+                {
+                    Padding = 20,
+                    Children =
+            {
+                new Image { Source = "rules.png", Aspect = Aspect.AspectFit },
+                closeBtn
+            }
+                }
+            };
+
+            closeBtn.Clicked += async (_, __) => await page.Navigation.PopModalAsync();
+            await Navigation.PushModalAsync(page);
         };
+
         ExitButton.Clicked += (_, __) =>
         {
-            try { Application.Current?.Quit(); } catch { /* platform-specific */ }
+            try { Application.Current?.Quit(); } catch { }
         };
     }
 
@@ -54,7 +72,6 @@ public partial class MainMenuPage : ContentPage
     {
         if (string.IsNullOrWhiteSpace(input)) return ("127.0.0.1", 8888);
 
-        // Accept: "ip", "ip:port", "host", "host:port"
         string host = input;
         int port = 8888;
 

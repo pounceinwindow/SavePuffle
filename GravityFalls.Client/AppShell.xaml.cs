@@ -8,10 +8,8 @@ public partial class AppShell : Shell
     {
         InitializeComponent();
 
-        // TODO: Роуты (навигация черцез Shell.Current.GoToAsync(nameof(...)))
         Routing.RegisterRoute(nameof(CharacterSelectionPage), typeof(CharacterSelectionPage));
 
-        // Страница игры
         Routing.RegisterRoute(nameof(GamePage), typeof(GamePage));
     }
 }

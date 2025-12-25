@@ -98,6 +98,12 @@
                                 Style="{StaticResource LinkButton}"
                                 HorizontalOptions="Center"/>
                         
+                        <Image x:Name="RulesImage"
+                         Source="rules.png"
+                          IsVisible="False"
+                         HeightRequest="300"
+                         Aspect="AspectFit" />
+                        
                         <Button x:Name="StartButton"
                                 Text="PLAY"
                                 FontAttributes="Bold"
@@ -120,8 +126,8 @@
 
                                 HeightRequest="52"
                                 CornerRadius="16"
-                                TextColor="Black"
-                                BackgroundColor="DarkGrey">
+                                TextColor="White"
+                                BackgroundColor="Red">
                             <Button.Shadow>
                                 <Shadow Opacity="0.35" Radius="12" Offset="0,6" />
                             </Button.Shadow>

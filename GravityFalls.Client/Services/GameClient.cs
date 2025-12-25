@@ -4,10 +4,6 @@ using System.Text.Json;
 
 namespace SavePuffle.Services;
 
-/// <summary>
-/// Tiny TCP client for the current server protocol:
-/// [4 bytes length (little-endian)] [1 byte OpCode] [AES-encrypted JSON body]
-/// </summary>
 public sealed class GameClient : IDisposable
 {
     public static GameClient Instance { get; } = new();
@@ -18,11 +14,8 @@ public sealed class GameClient : IDisposable
     private readonly SemaphoreSlim _sendLock = new(1, 1);
 
     public bool IsConnected => _client?.Connected ?? false;
-
-    /// <summary>Nickname that was used on ConnectAsync.</summary>
     public string Nickname { get; private set; } = "";
 
-    // Cache last known states so UI can attach late (after navigation)
     public LobbyStateDto? LastLobbyState { get; private set; }
     public GameStateDto? LastGameState { get; private set; }
     public DiceResultDto? LastDiceResult { get; private set; }
@@ -52,13 +45,12 @@ public sealed class GameClient : IDisposable
         _receiveCts = new CancellationTokenSource();
         _ = Task.Run(() => ReceiveLoopAsync(_receiveCts.Token));
 
-        // Immediately send Login with Nickname (email removed).
         await SendAsync(OpCode.Login, new LoginDto { Nickname = nickname }, ct);
     }
 
     public Task ToggleReadyAsync(CancellationToken ct = default) => SendAsync(OpCode.ToggleReady, new { }, ct);
     public Task SelectHeroAsync(HeroType hero, CancellationToken ct = default) => SendAsync(OpCode.SelectHero, new SelectHeroDto { Hero = hero }, ct);
-    public Task RollDiceAsync(CancellationToken ct = default) => SendAsync(OpCode.RollDice, new { }, ct);
+    public Task RollDiceAsync(RollDiceDto dto, CancellationToken ct = default) => SendAsync(OpCode.RollDice, dto ?? new RollDiceDto(), ct);
     public Task ExchangeAsync(CancellationToken ct = default) => SendAsync(OpCode.Exchange, new ExchangeDto(), ct);
 
     public void Disconnect()
@@ -129,7 +121,6 @@ public sealed class GameClient : IDisposable
         }
         catch (OperationCanceledException)
         {
-            // expected on Disconnect
         }
         catch (Exception ex)
         {

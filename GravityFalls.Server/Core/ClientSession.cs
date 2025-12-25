@@ -11,7 +11,6 @@ namespace GravityFalls.Server.Core
         public bool IsReady { get; set; }
         public bool IsConnected => _client.Connected;
 
-        // Game state (server-authoritative)
         public int Position { get; set; } = 0;
         public bool HasWaddles { get; set; } = false;
         public HeroType Hero { get; set; } = HeroType.Dipper;
@@ -113,9 +112,22 @@ namespace GravityFalls.Server.Core
                         break;
                     }
                 case OpCode.RollDice:
-                    _server.GameLoop.HandleDiceRoll(this);
-                    break;
+                    {
+                        RollDiceDto dto;
+                        try
+                        {
+                            dto = string.IsNullOrWhiteSpace(json)
+                                ? new RollDiceDto()
+                                : (JsonSerializer.Deserialize<RollDiceDto>(json) ?? new RollDiceDto());
+                        }
+                        catch
+                        {
+                            dto = new RollDiceDto();
+                        }
 
+                        _server.GameLoop.HandleDiceRoll(this, dto);
+                        break;
+                    }
                 case OpCode.Exchange:
                     _server.GameLoop.TryExchange(this);
                     break;

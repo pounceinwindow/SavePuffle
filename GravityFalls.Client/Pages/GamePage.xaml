@@ -173,7 +173,7 @@
 
                         <Border Grid.Row="3" Stroke="{StaticResource Line}" StrokeThickness="2" StrokeShape="RoundRectangle 16" BackgroundColor="#E8C98A" Padding="12">
                             <Grid RowDefinitions="Auto,*" RowSpacing="8">
-                                <Label Text="События" TextColor="{StaticResource Ink}" FontAttributes="Bold" />
+                                <Label  TextColor="{StaticResource Ink}" FontAttributes="Bold" />
                                 <CollectionView x:Name="EventsView" Grid.Row="1" HeightRequest="220">
                                     <CollectionView.ItemTemplate>
                                         <DataTemplate>

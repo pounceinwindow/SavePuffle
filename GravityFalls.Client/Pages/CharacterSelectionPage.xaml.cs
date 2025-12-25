@@ -119,14 +119,12 @@ public partial class CharacterSelectionPage : ContentPage
             if (me != null && !me.IsEmpty)
                 ConfirmButton.Text = me.IsReady ? "UNREADY" : "READY";
 
-            LobbyHint.Text = $"Комната: {lobby.RoomCode} • Старт когда все 4 готовы.";
         });
     }
 
     private void SetHeroButtonState(Button btn, HeroType hero, HashSet<HeroType> taken)
     {
         bool takenByOther = taken.Contains(hero);
-
         if (_myId >= 0)
         {
             var mine = _slots.FirstOrDefault(s => s.PlayerId == _myId);
